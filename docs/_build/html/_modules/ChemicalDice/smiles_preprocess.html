@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChemicalDice.smiles_preprocess &mdash; ChemicalDice 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7026087e"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ChemicalDice
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/GettingStarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/methods/ImputationMethods.html">Imputation Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/methods/NormalizationMethods.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pages/methods/FusionMethods.html">Fusion Methods</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Details of modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">ChemicalDice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ChemicalDice</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ChemicalDice.smiles_preprocess</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ChemicalDice.smiles_preprocess</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">openbabel</span> <span class="kn">import</span> <span class="n">pybel</span>
+<span class="c1">#import mol2_to_image</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1">#from multiprocessing import Pool</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+
+
+
+<span class="kn">from</span> <span class="nn">ChemicalDice.smiles_preprocess_need</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+
+
+
+
+
+
+<span class="c1"># def add_mol2_files(input_file,output_dir):</span>
+<span class="c1">#     if not os.path.exists(output_dir):</span>
+<span class="c1">#         os.makedirs(output_dir)</span>
+<span class="c1">#     smiles_df = pd.read_csv(input_file)</span>
+<span class="c1">#     smiles_list = smiles_df[&#39;SMILES&#39;]</span>
+<span class="c1">#     if &#39;id&#39; in smiles_df.columns:</span>
+<span class="c1">#         smiles_id_list = smiles_df[&#39;id&#39;]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         smiles_df[&#39;id&#39;] = [ &quot;C&quot;+str(id) for id in range(len(smiles_list))]</span>
+<span class="c1">#         smiles_id_list = smiles_df[&#39;id&#39;]</span>
+<span class="c1">#     mol2_file_paths = smile_to_mol2(smiles_list, smiles_id_list, output_dir)</span>
+<span class="c1">#     smiles_df[&#39;mol2_files&#39;] = mol2_file_paths</span>
+<span class="c1">#     smiles_df.to_csv(input_file,index=False)</span>
+    <span class="c1">#return(smiles_df)</span>
+
+<div class="viewcode-block" id="add_canonical_smiles">
+<a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.smiles_preprocess.add_canonical_smiles">[docs]</a>
+<span class="k">def</span> <span class="nf">add_canonical_smiles</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list of SMILES strings to canonical SMILES strings. Add a column Canonical_SMILES to input file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        Input file containing SMILES column.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        This function updates the input CSV file in place and does not return any value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">smiles_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">smiles_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;SMILES&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">smiles_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">smiles_id_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;C&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">))]</span>
+        <span class="n">smiles_id_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="n">canonical_smiles_list</span> <span class="o">=</span> <span class="n">smile_to_canonical</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">)</span>
+    <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;Canonical_SMILES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical_smiles_list</span>
+    <span class="n">smiles_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+
+
+
+
+
+<div class="viewcode-block" id="create_sdf_files">
+<a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.smiles_preprocess.create_sdf_files">[docs]</a>
+<span class="k">def</span> <span class="nf">create_sdf_files</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;temp_data/sdffiles&quot;</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convert MOL2 files to SDF files and update the input CSV file.</span>
+
+<span class="sd">  This function reads a CSV file containing paths to MOL2 files and converts each MOL2 file to an SDF file.</span>
+<span class="sd">  The generated SDF files are saved in the specified output directory. The input CSV file is updated with</span>
+<span class="sd">  paths to the generated SDF files.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  input_file : str</span>
+<span class="sd">    Path to the input CSV file containing MOL2 file paths. The CSV file must have columns &#39;mol2_files&#39; and &#39;id&#39;.</span>
+<span class="sd">  output_dir : str, optional</span>
+<span class="sd">    Path to the directory where the SDF files will be saved. Default is &quot;temp_data/sdffiles&quot;.</span>
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  None</span>
+<span class="sd">    This function updates the input CSV file in place and does not return any value.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">smiles_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;making directory &quot;</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+  <span class="n">mol2file_name_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;mol2_files&#39;</span><span class="p">]</span>
+  <span class="n">id_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+  <span class="n">sdf_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">mol2file_name</span><span class="p">,</span><span class="nb">id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mol2file_name_list</span><span class="p">,</span> <span class="n">id_list</span><span class="p">)):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sdf_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span><span class="nb">id</span><span class="o">+</span><span class="s2">&quot;.sdf&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">sdf_name</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">sdf_name</span><span class="p">,</span><span class="s2">&quot; already exist&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="n">pybel</span><span class="o">.</span><span class="n">readfile</span><span class="p">(</span><span class="s2">&quot;mol2&quot;</span><span class="p">,</span> <span class="n">mol2file_name</span><span class="p">):</span>
+                <span class="n">mymol</span> <span class="o">=</span> <span class="n">mol</span>
+            <span class="n">mymol</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;sdf&quot;</span><span class="p">,</span> <span class="n">sdf_name</span> <span class="p">,</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sdf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sdf_name</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in conversion of &quot;</span><span class="p">,</span> <span class="n">mol2file_name</span><span class="p">)</span>
+        <span class="n">sdf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+  <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;sdf_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sdf_list</span>
+  <span class="n">smiles_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+
+
+
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="n">cpu_to_use</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">cpu_to_use</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cpu_to_use</span><span class="p">)</span>
+
+<div class="viewcode-block" id="create_mol2_files">
+<a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.smiles_preprocess.create_mol2_files">[docs]</a>
+<span class="k">def</span> <span class="nf">create_mol2_files</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;temp_data/mol2files&quot;</span><span class="p">,</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="n">cpu_to_use</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert SMILES strings from a CSV file to MOL2 files using multiprocessing.</span>
+
+<span class="sd">    This function reads a CSV file containing SMILES strings, generates 3D structures,</span>
+<span class="sd">    and saves them as MOL2 files in the specified output directory. The conversion is</span>
+<span class="sd">    performed in parallel using multiple CPU cores.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        Path to the input CSV file containing SMILES strings. The CSV file must have</span>
+<span class="sd">        a column named &#39;SMILES&#39; and optionally an &#39;id&#39; column.</span>
+<span class="sd">    output_dir : str, optional</span>
+<span class="sd">        Path to the directory where the MOL2 files will be saved. Default is &quot;temp_data/mol2files&quot;.</span>
+<span class="sd">    ncpu : int, optional</span>
+<span class="sd">        The number of CPU cores to use for parallel processing. Default is half of total number of cores.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">smiles_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">smiles_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;SMILES&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">smiles_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">smiles_id_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">))]</span>
+        <span class="n">smiles_id_list</span> <span class="o">=</span> <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="n">smiles_id_tuples</span> <span class="o">=</span> <span class="p">[(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">smiles_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">smiles_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">,</span> <span class="n">smiles_id_list</span><span class="p">)]</span>
+
+    <span class="c1"># with Pool() as pool:</span>
+    <span class="c1">#     mol2_file_paths = list(tqdm(pool.imap(smile_to_mol2, smiles_id_tuples), total=len(smiles_id_tuples)))</span>
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">ncpu</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="n">mol2_file_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">smile_to_mol2</span><span class="p">,</span> <span class="n">smiles_id_tuples</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">smiles_id_tuples</span><span class="p">)))</span>
+
+    <span class="n">smiles_df</span><span class="p">[</span><span class="s1">&#39;mol2_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mol2_file_paths</span>
+    <span class="n">smiles_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># input_file = &#39;pcbaexample.csv&#39;</span>
+<span class="c1"># output_dir = &#39;mol2files4&#39;</span>
+
+<span class="c1"># start_time = time.time()</span>
+<span class="c1"># add_mol2_files(input_file, output_dir, ncpu)</span>
+<span class="c1"># end_time = time.time()</span>
+<span class="c1"># execution_time = end_time - start_time</span>
+<span class="c1"># print(&quot;Script execution time: {:.2f} seconds&quot;.format(execution_time))</span>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Suvendu Kumar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

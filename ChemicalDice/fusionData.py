@@ -741,60 +741,37 @@ class fusionData:
         list_of_files = os.listdir(fused_data_path)
         self.task_type = task_type
         self.folds = folds
-        try:
-            os.mkdir(f"{folds}_fold_CV_results")
-        except:
-            print(f"{folds}_fold_CV_results already exists")
-
-        for file in list_of_files:
-            y = self.prediction_label
-            kf = KFold(n_splits=folds, shuffle=True, random_state=42)
-
-            if task_type == "classification":
-                if models == None:
-                    models = [
-                        ("Logistic Regression", LogisticRegression()),
-                        ("Decision Tree", DecisionTreeClassifier()),
-                        ("Random Forest", RandomForestClassifier()),
-                        ("Support Vector Machine", SVC(probability=True)),
-                        ("Naive Bayes", GaussianNB()),
-                        ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
-                        ("MLP", MLPClassifier(alpha=1, max_iter=1000)),
-                        ("QDA", QuadraticDiscriminantAnalysis()),
-                        ("AdaBoost", AdaBoostClassifier()),
-                        ("Extra Trees", ExtraTreesClassifier()),
-                        ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
-                    ]
-                else:
-                    classifiers = [
-                        ("Logistic Regression", LogisticRegression()),
-                        ("Decision Tree", DecisionTreeClassifier()),
-                        ("Random Forest", RandomForestClassifier()),
-                        ("Support Vector Machine", SVC(probability=True)),
-                        ("Naive Bayes", GaussianNB()),
-                        ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
-                        ("NeuralNet", MLPClassifier(alpha=1, max_iter=1000)),
-                        ("QDA", QuadraticDiscriminantAnalysis()),
-                        ("AdaBoost", AdaBoostClassifier()),
-                        ("Extra Trees", ExtraTreesClassifier()),
-                        ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
-                    ]
-                    models = [clf for clf in classifiers if clf[0] in models]
-
-                metrics = {
-                    "Model type": [],
-                    "Fold": [],
-                    "Model": [],
-                    "AUC": [],
-                    "Accuracy": [],
-                    "Precision": [],
-                    "Recall": [],
-                    "f1 score": [],
-                    "Balanced accuracy": [],
-                    "MCC": [],
-                    "Kappa": []
-                }
-            elif task_type == "regression":
+        if task_type == "classification":
+            if models == None:
+                models = [
+                    ("Logistic Regression", LogisticRegression()),
+                    ("Decision Tree", DecisionTreeClassifier()),
+                    ("Random Forest", RandomForestClassifier()),
+                    ("Support Vector Machine", SVC(probability=True)),
+                    ("Naive Bayes", GaussianNB()),
+                    ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
+                    ("MLP", MLPClassifier(alpha=1, max_iter=1000)),
+                    ("QDA", QuadraticDiscriminantAnalysis()),
+                    ("AdaBoost", AdaBoostClassifier()),
+                    ("Extra Trees", ExtraTreesClassifier()),
+                    ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
+                ]
+            else:
+                classifiers = [
+                    ("Logistic Regression", LogisticRegression()),
+                    ("Decision Tree", DecisionTreeClassifier()),
+                    ("Random Forest", RandomForestClassifier()),
+                    ("Support Vector Machine", SVC(probability=True)),
+                    ("Naive Bayes", GaussianNB()),
+                    ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
+                    ("NeuralNet", MLPClassifier(alpha=1, max_iter=1000)),
+                    ("QDA", QuadraticDiscriminantAnalysis()),
+                    ("AdaBoost", AdaBoostClassifier()),
+                    ("Extra Trees", ExtraTreesClassifier()),
+                    ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
+                ]
+                models = [clf for clf in classifiers if clf[0] in models]
+        elif task_type == "regression":
                 if models == None:
                     models = [
                         ("Linear Regression", LinearRegression()),
@@ -829,7 +806,37 @@ class fusionData:
                     ]
 
                     models = [regg for regg in regressors if regg[0] in models]
+        else:
+            raise ValueError("task_type can be either 'classification' or 'regression'")
+        
+        if len(models) == 0 :
+            ValueError("models given are invalid")
 
+        try:
+            os.mkdir(f"{folds}_fold_CV_results")
+        except:
+            print(f"{folds}_fold_CV_results already exists")
+
+        for file in list_of_files:
+            y = self.prediction_label
+            kf = KFold(n_splits=folds, shuffle=True, random_state=42)
+            #print(file)
+            #print(1)
+            if task_type == "classification":
+                metrics = {
+                    "Model type": [],
+                    "Fold": [],
+                    "Model": [],
+                    "AUC": [],
+                    "Accuracy": [],
+                    "Precision": [],
+                    "Recall": [],
+                    "f1 score": [],
+                    "Balanced accuracy": [],
+                    "MCC": [],
+                    "Kappa": []
+                }
+            elif task_type == "regression":
                 metrics = {
                     "Model type": [],
                     "Model": [],
@@ -839,22 +846,19 @@ class fusionData:
                     "RMSE": [],
                     "MAE": []
                 }
-            else:
-                raise ValueError("task_type can be either 'classification' or 'regression'")
-            
-            if len(models) == 0 :
-                ValueError("models given are invalid")
+
 
             fold_number = 0
 
             for train_index, test_index in kf.split(y):
+                #print(2)
                 fold_number += 1
                 if file.startswith("fused_data"):
                     method_chemdice = file.replace("fused_data_", "")
                     method_chemdice= method_chemdice.replace(".csv","")
                     # print(method_chemdice)
                     if method_chemdice.startswith("plsda"):
-                        print("Method name",method_chemdice)
+                        #print("Method name",method_chemdice)
                         n_components = method_chemdice.replace("plsda_","")
                         n_components = int(n_components.replace(".csv",""))
                         train_dataframes, test_dataframes, train_label, test_label  = save_train_test_data_n_fold(self.dataframes, self.prediction_label, train_index, test_index, output_dir="comaprision_data_fold_"+str(fold_number)+"_of_"+str(fold_number))
@@ -865,7 +869,7 @@ class fusionData:
                         # print("y_test")
                         # print(y_test)
                     elif method_chemdice.startswith("tensordecompose"):
-                        print("Method name",method_chemdice)
+                        #print("Method name",method_chemdice)
                         n_components = method_chemdice.replace("tensordecompose_","")
                         n_components = int(n_components.replace(".csv",""))
                         train_dataframes, test_dataframes, train_label, test_label  = save_train_test_data_n_fold(self.dataframes, self.prediction_label, train_index, test_index, output_dir="comaprision_data_fold_"+str(fold_number)+"_of_"+str(fold_number))
@@ -920,6 +924,7 @@ class fusionData:
                             metrics["Balanced accuracy"].append(baccuracy)
                             metrics["MCC"].append(mcc)
                             metrics["Kappa"].append(kappa)
+                            #print(metrics)
                         else:
                             y_pred = model.predict(X_test)
                             # Compute the metrics
@@ -934,6 +939,8 @@ class fusionData:
                             metrics["RMSE"].append(rmse)
                             metrics["MAE"].append(mae)
                             metrics["R2 Score"].append(r2)
+                            #print(metrics)
+            #print(metrics)
             #print(metrics)
             metrics_df = pd.DataFrame(metrics)
             metrics_df.to_csv(f"{folds}_fold_CV_results/Accuracy_Metrics_{method_chemdice}.csv", index=False)
@@ -996,10 +1003,100 @@ class fusionData:
         except:
             print("scaffold_split_results already exist")
 
+        if task_type == "classification":
+            classifiers = [
+                ("Logistic Regression", LogisticRegression(), {
+                    'C': [0.01, 0.1, 1, 10, 100],
+                    'penalty': ['l1', 'l2'],
+                    'solver': ['saga']
+                }),
+                ("Decision Tree", DecisionTreeClassifier(), {
+                    'max_depth': [None, 10, 20, 30],
+                    'min_samples_split': [2, 5, 10]
+                }),
+                ("Random Forest", RandomForestClassifier(), {
+                    'n_estimators': [50, 100, 200, 300, 400],
+                    'max_depth': [None, 10, 20],
+                    'min_samples_split': [2, 5, 10]
+                }),
+                ("Support Vector Machine", SVC(probability=True), {
+                    'C': [0.1, 1, 10],
+                    'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
+                    'degree': [2, 3, 4],
+                    'gamma': ['scale', 'auto']
+                }),
+                ("Naive Bayes", GaussianNB(), {
+                    'var_smoothing': [1e-9, 1e-8, 1e-7]
+                }),
+                ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance'), {
+                    'n_neighbors': [3, 5, 7, 9, 11],
+                    'weights': ['uniform', 'distance'],
+                    'leaf_size': [1, 10, 30],
+                    'p': [1, 2, 3]
+                }),
+                ("MLP", MLPClassifier(alpha=1, max_iter=1000), {
+                    'hidden_layer_sizes': [(10,), (20,), (50,)],
+                    'activation': ['relu', 'logistic', 'tanh'],
+                    'solver': ['adam', 'sgd'],
+                    'alpha': [0.0001, 0.001, 0.01, 1]
+                }),
+                ("QDA", QuadraticDiscriminantAnalysis(), {
+                    'reg_param': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
+                }),
+                ("AdaBoost", AdaBoostClassifier(), {
+                    'n_estimators': [50, 100, 200],
+                    'learning_rate': [0.01, 0.1, 1]
+                }),
+                ("Extra Trees", ExtraTreesClassifier(), {
+                    'n_estimators': [50, 100, 200],
+                    'max_depth': [None, 10, 20],
+                    'min_samples_split': [2, 5, 10],
+                    'max_features': ['sqrt', 'log2', None]
+                }),
+                ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'), {
+                    'n_estimators': [50, 100, 200],
+                    'max_depth': [3, 5, 7],
+                    'learning_rate': [0.01, 0.1, 0.3],
+                    'subsample': [0.5, 0.7, 1.0],
+                    'colsample_bytree': [0.5, 0.7, 1.0]
+                })
+            ]
+            if models ==None:
+                models = classifiers
+            else:
+                models = [clf for clf in classifiers if clf[0] in models]
+        # Define models and their respective parameter grids
+        elif task_type == "regression":
+            regressors = [
+                ("MLP", MLPRegressor(), {'hidden_layer_sizes': [(50,), (100,), (50, 50)], 'activation': ['relu', 'tanh'], 'alpha': [0.0001, 0.001, 0.01]}),
+                ("Kernel Ridge", KernelRidge(), {'alpha': [0.1, 1.0, 10.0], 'kernel': ['linear', 'rbf', 'poly'], 'gamma': [0.1, 1.0, 10.0]}),
+                ("Linear Regression", LinearRegression(), {'fit_intercept': [True, False]}),
+                ("Ridge", Ridge(), {'alpha': [0.1, 1.0, 10.0]}),
+                ("Lasso", Lasso(), {'alpha': [0.1, 1.0, 10.0]}),
+                ("ElasticNet", ElasticNet(), {'alpha': [0.1, 1.0, 10.0], 'l1_ratio': [0.1, 0.5, 0.9]}),
+                ("Decision Tree", DecisionTreeRegressor(), {'max_depth': [None, 10, 20], 'min_samples_split': [2, 5, 10]}),
+                ("Random Forest", RandomForestRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'max_depth': [None, 10, 20], 'min_samples_split': [2, 5, 10]}),
+                ("Gradient Boosting", GradientBoostingRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'max_depth': [3, 5, 7]}),
+                ("AdaBoost", AdaBoostRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'learning_rate': [0.01, 0.1, 1.0]}),
+                ("Support Vector Machine", SVR(), {'kernel': ['linear', 'rbf'], 'C': [0.1, 1.0, 10.0], 'epsilon': [0.1, 0.01, 0.001]}),
+                ("K Neighbors", KNeighborsRegressor(), {'n_neighbors': [3, 5, 10], 'weights': ['uniform', 'distance']}),
+                ("Gaussian Process", GaussianProcessRegressor(), {'alpha': [1e-10, 1e-9, 1e-8],'kernel': [RBF(), Matern()] })
+            ]
+            if models==None:
+                models = regressors
+            else:
+                models = [regg for regg in regressors if regg[0] in models]
+        else:
+            raise ValueError("task_type can be either 'classification' or 'regression'")
+        
+
+        if len(models) == 0:
+            ValueError("models provided are not valid")
+
         for file in list_of_files:
             method_chemdice = file.replace("fused_data_", "")
             method_chemdice= method_chemdice.replace(".csv","")
-            print(method_chemdice)
+            # print(method_chemdice)
             y = self.prediction_label
 
             if task_type == "classification":
@@ -1069,8 +1166,7 @@ class fusionData:
                     "RMSE":[],
                     "MAE":[]
                     }
-            else:
-                raise ValueError("task_type can be either 'classification' or 'regression'")
+
 
             if split_type == "random":
                 train_index, val_index, test_index  = random_scaffold_split_train_val_test(index = y.index.to_list(), smiles_list = self.smiles_col.to_list(), seed=0)
@@ -1079,9 +1175,9 @@ class fusionData:
             elif split_type == "simple":
                 train_index, val_index, test_index  = scaffold_split_train_val_test(index = y.index.to_list(), smiles_list = self.smiles_col.to_list(), seed=0)
 
-            
+            print("Method name",method_chemdice)
             if method_chemdice.startswith("plsda"):
-                print("Method name",method_chemdice)
+                # print("Method name",method_chemdice)
                 n_components = method_chemdice.replace("plsda_","")
                 n_components = int(n_components.replace(".csv",""))
                 train_dataframes,val_dataframe, test_dataframes, train_label, val_label, test_label  = save_train_test_data_s_fold(self.dataframes, self.prediction_label, train_index,val_index, test_index)
@@ -1092,7 +1188,7 @@ class fusionData:
                 X_val = self.fuseFeaturesTest_plsda(n_components = n_components,  method=method_chemdice,test_dataframes = val_dataframe)
                 y_val = val_label
             elif  method_chemdice.startswith("tensordecompose"):
-                print("Method name",method_chemdice)
+                # print("Method name",method_chemdice)
                 n_components = method_chemdice.replace("tensordecompose_","")
                 n_components = int(n_components.replace(".csv",""))
                 train_dataframes,val_dataframe, test_dataframes, train_label, val_label, test_label  = save_train_test_data_s_fold(self.dataframes, self.prediction_label, train_index,val_index, test_index)
@@ -1103,97 +1199,14 @@ class fusionData:
                 X_val = self.fuseFeaturesTest_td(n_components = n_components,  method=method_chemdice,test_dataframes = val_dataframe)
                 y_val = val_label
             else:
+                # print("Method name",method_chemdice)
                 data = pd.read_csv(os.path.join(fused_data_path, file),index_col=0)
                 X = data
 
                 X_train, X_test, X_val = X.loc[train_index], X.loc[test_index], X.loc[val_index]
                 y_train, y_test, y_val = y[train_index], y[test_index], y[val_index]
-            if task_type == "classification":
-                classifiers = [
-                    ("Logistic Regression", LogisticRegression(), {
-                        'C': [0.01, 0.1, 1, 10, 100],
-                        'penalty': ['l1', 'l2'],
-                        'solver': ['saga']
-                    }),
-                    ("Decision Tree", DecisionTreeClassifier(), {
-                        'max_depth': [None, 10, 20, 30],
-                        'min_samples_split': [2, 5, 10]
-                    }),
-                    ("Random Forest", RandomForestClassifier(), {
-                        'n_estimators': [50, 100, 200, 300, 400],
-                        'max_depth': [None, 10, 20],
-                        'min_samples_split': [2, 5, 10]
-                    }),
-                    ("Support Vector Machine", SVC(probability=True), {
-                        'C': [0.1, 1, 10],
-                        'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-                        'degree': [2, 3, 4],
-                        'gamma': ['scale', 'auto']
-                    }),
-                    ("Naive Bayes", GaussianNB(), {
-                        'var_smoothing': [1e-9, 1e-8, 1e-7]
-                    }),
-                    ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance'), {
-                        'n_neighbors': [3, 5, 7, 9, 11],
-                        'weights': ['uniform', 'distance'],
-                        'leaf_size': [1, 10, 30],
-                        'p': [1, 2, 3]
-                    }),
-                    ("MLP", MLPClassifier(alpha=1, max_iter=1000), {
-                        'hidden_layer_sizes': [(10,), (20,), (50,)],
-                        'activation': ['relu', 'logistic', 'tanh'],
-                        'solver': ['adam', 'sgd'],
-                        'alpha': [0.0001, 0.001, 0.01, 1]
-                    }),
-                    ("QDA", QuadraticDiscriminantAnalysis(), {
-                        'reg_param': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-                    }),
-                    ("AdaBoost", AdaBoostClassifier(), {
-                        'n_estimators': [50, 100, 200],
-                        'learning_rate': [0.01, 0.1, 1]
-                    }),
-                    ("Extra Trees", ExtraTreesClassifier(), {
-                        'n_estimators': [50, 100, 200],
-                        'max_depth': [None, 10, 20],
-                        'min_samples_split': [2, 5, 10],
-                        'max_features': ['sqrt', 'log2', None]
-                    }),
-                    ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'), {
-                        'n_estimators': [50, 100, 200],
-                        'max_depth': [3, 5, 7],
-                        'learning_rate': [0.01, 0.1, 0.3],
-                        'subsample': [0.5, 0.7, 1.0],
-                        'colsample_bytree': [0.5, 0.7, 1.0]
-                    })
-                ]
-                if models ==None:
-                    models = classifiers
-                else:
-                    models = [clf for clf in classifiers if clf[0] in models]
-            # Define models and their respective parameter grids
-            elif task_type == "regression":
-                regressors = [
-                    ("MLP", MLPRegressor(), {'hidden_layer_sizes': [(50,), (100,), (50, 50)], 'activation': ['relu', 'tanh'], 'alpha': [0.0001, 0.001, 0.01]}),
-                    ("Kernel Ridge", KernelRidge(), {'alpha': [0.1, 1.0, 10.0], 'kernel': ['linear', 'rbf', 'poly'], 'gamma': [0.1, 1.0, 10.0]}),
-                    ("Linear Regression", LinearRegression(), {'fit_intercept': [True, False]}),
-                    ("Ridge", Ridge(), {'alpha': [0.1, 1.0, 10.0]}),
-                    ("Lasso", Lasso(), {'alpha': [0.1, 1.0, 10.0]}),
-                    ("ElasticNet", ElasticNet(), {'alpha': [0.1, 1.0, 10.0], 'l1_ratio': [0.1, 0.5, 0.9]}),
-                    ("Decision Tree", DecisionTreeRegressor(), {'max_depth': [None, 10, 20], 'min_samples_split': [2, 5, 10]}),
-                    ("Random Forest", RandomForestRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'max_depth': [None, 10, 20], 'min_samples_split': [2, 5, 10]}),
-                    ("Gradient Boosting", GradientBoostingRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'max_depth': [3, 5, 7]}),
-                    ("AdaBoost", AdaBoostRegressor(), {'n_estimators': [50, 100, 200, 300, 400], 'learning_rate': [0.01, 0.1, 1.0]}),
-                    ("Support Vector Machine", SVR(), {'kernel': ['linear', 'rbf'], 'C': [0.1, 1.0, 10.0], 'epsilon': [0.1, 0.01, 0.001]}),
-                    ("K Neighbors", KNeighborsRegressor(), {'n_neighbors': [3, 5, 10], 'weights': ['uniform', 'distance']}),
-                    ("Gaussian Process", GaussianProcessRegressor(), {'alpha': [1e-10, 1e-9, 1e-8],'kernel': [RBF(), Matern()] })
-                ]
-                if models==None:
-                    models = regressors
-                else:
-                    models = [regg for regg in regressors if regg[0] in models]
 
-            if len(models) == 0:
-                ValueError("models provided are not valid")
+
             parameters_dict = {model_name: [] for model_name, _, _ in models}
             best_parameters_dict = {}
 
@@ -1288,9 +1301,9 @@ class fusionData:
 
 
                 name = method_chemdice+"_"+name
-                print("**************************   "+name + "    **************************")
+                #print("**************************   "+name + "    **************************")
                 
-                print(best_parameter)
+                #print(best_parameter)
                 model.set_params(**best_parameter)
                 model.fit(X_train, y_train)
 
@@ -1311,7 +1324,7 @@ class fusionData:
                     train_metrics["MAE"].append(mae)
                     train_metrics["R2 Score"].append(r2)
                 
-                    print(" ######## Validation data #########")
+                    #print(" ######## Validation data #########")
                     y_pred = model.predict(X_val)
                     # Compute the metrics
                     mse = mean_squared_error(y_val, y_pred)
@@ -1423,7 +1436,7 @@ class fusionData:
                     test_metrics["MCC"].append(mcc)
                     test_metrics["Kappa"].append(kappa)
 
-                    print("done")
+                    #print("done")
 
 
             
@@ -1452,7 +1465,8 @@ class fusionData:
 
             Accuracy_metrics.to_csv(f"scaffold_split_results/Accuracy_Metrics_{method_chemdice}.csv", index=False)
             print("Done")
-            print(f"scaffold_split_results/Accuracy_Metrics_{method_chemdice}.csv saved")        
+            print(f"scaffold_split_results/Accuracy_Metrics_{method_chemdice}.csv saved") 
+            print()       
 
 
 
@@ -1472,16 +1486,18 @@ class fusionData:
 
         """
         list_of_files = os.listdir(result_dir)
+        #print(list_of_files)
         dataframes = []
         for files in list_of_files:
             if files.startswith("Accuracy_Metrics"):
+                # print(files)
                 files = result_dir+"/"+files
                 df = pd.read_csv(files)
                 dataframes.append(df)
-        if len(dataframes) == 1:
-            metrics_df = dataframes[0]
-        else:
-            pass
+        # if len(dataframes) == 0:
+        #     metrics_df = dataframes[0]
+        # else:
+        #     pass
         metrics_df = pd.concat(dataframes, ignore_index=True )
         if 'Fold' not in metrics_df.columns:
             # Define the folder path
@@ -1551,7 +1567,7 @@ class fusionData:
                 Accuracy_metrics = metrics_df
 
                 grouped_means = metrics_df.groupby('Model').mean(numeric_only = True).reset_index()
-                metrics_df = grouped_means.drop(columns=['Fold'])
+                #metrics_df = grouped_means.drop(columns=['Fold'])
                 metrics_df = metrics_df.sort_values(by="AUC",ascending = False)
                 mean_accuracy_metrics = metrics_df
 
@@ -1583,7 +1599,7 @@ class fusionData:
 
 
                 grouped_means = metrics_df.groupby('Model').mean(numeric_only = True).reset_index()
-                metrics_df = grouped_means.drop(columns=['Fold'])
+                #metrics_df = grouped_means.drop(columns=['Fold'])
                 metrics_df = metrics_df.sort_values(by="R2 Score",ascending = False)
                 mean_accuracy_metrics = metrics_df
 

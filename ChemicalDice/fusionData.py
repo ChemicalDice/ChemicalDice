@@ -505,7 +505,7 @@ class fusionData:
         methods_chemdices_text = ",".join(methods_chemdices)
         invalid_methods_chemdices_text = ",".join(invalid_methods_chemdices)
         if len(invalid_methods_chemdices):
-            ValueError(f"These methods are invalid:{invalid_methods_chemdices_text}\n Valid methods are : {methods_chemdices_text}")
+            raise ValueError(f"These methods are invalid:{invalid_methods_chemdices_text}\n Valid methods are : {methods_chemdices_text}")
         dataframe = self.dataframes
         for method in valid_methods_chemdices:
             print(method)
@@ -592,65 +592,11 @@ class fusionData:
                         fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
                         fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
                     else:
-                        ValueError("AER_dim should be  int or list")
+                        raise ValueError("AER_dim should be  int or list")
 
-                    # explanibility = {}
-                    # for name, df in self.dataframes.items():
-                    #     if name.lower() == "mopac":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[0]})
-                    #     elif name.lower() == "chemberta":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[1]})
-                    #     elif name.lower() ==  "mordred":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[2]})
-                    #     elif name.lower() ==  "signaturizer":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[3]})
-                    #     elif name.lower() ==  "imagemol":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[4]})
-                    #     elif name.lower() ==  "grover":
-                    #         column_name = df.columns
-                    #         explanibility['name'] = pd.DataFrame({'Feature':column_name,'weights':model_wt[5]})
-                    # self.training_AER_model = model_state
-                    # self.AER_model_embt_size = embd
-                    # self.AER_model_explainability = explanibility
                 else:
                     print("AER model Training")
-                # embd = AER_dim
-                # df_list2=[None,None,None,None,None,None]
-                # for name, df in dataframe.items():
-                #     if name.lower() == "mopac":
-                #         df_list2[0] = df.copy()
-                #     elif name.lower() == "chemberta":
-                #         df_list2[1] = df.copy()
-                #     elif name.lower() ==  "mordred":
-                #         df_list2[2] = df.copy()
-                #     elif name.lower() ==  "signaturizer":
-                #         df_list2[3] = df.copy()
-                #     elif name.lower() ==  "imagemol":
-                #         df_list2[4] = df.copy()
-                #     elif name.lower() ==  "grover":
-                #         df_list2[5] = df.copy()
-                
-                # model_state = self.training_AER_model
-                # all_embeddings = AutoencoderReconstructor_testing(df_list2[0],df_list2[1],df_list2[2],df_list2[3],df_list2[4],df_list2[5],embedding_sizes=embd, model_state=model_state)
-                
-                # scaler = StandardScaler()
-                # if len(all_embeddings) > 1:
-                #     fused_df1 = []
-                #     for i in range(len(all_embeddings)):
-                #         fused_df_unstandardized = all_embeddings[i]
-                #         fused_df_unstandardized.set_index("id",inplace =True)
-                #         fused_df = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
-                #         fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+all_embeddings[i]+".csv"))
-                # else:
-                #     fused_df_unstandardized = all_embeddings[0]
-                #     fused_df_unstandardized.set_index("id",inplace =True)
-                #     fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
-                #     fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+all_embeddings[0]+".csv"))
+
                     
             prediction_label = self.prediction_label
             if method in ['plsda']:
@@ -810,7 +756,7 @@ class fusionData:
             raise ValueError("task_type can be either 'classification' or 'regression'")
         
         if len(models) == 0 :
-            ValueError("models given are invalid")
+            raise ValueError("models given are invalid")
 
         try:
             os.mkdir(f"{folds}_fold_CV_results")
@@ -1089,9 +1035,9 @@ class fusionData:
         else:
             raise ValueError("task_type can be either 'classification' or 'regression'")
         
-
+        print(len(models))
         if len(models) == 0:
-            ValueError("models provided are not valid")
+            raise ValueError("models provided are not valid")
 
         for file in list_of_files:
             method_chemdice = file.replace("fused_data_", "")
@@ -1275,16 +1221,19 @@ class fusionData:
                             "baccuracy",
                             "mcc",
                             "kappa"]
+                
                 for measure in measures:
                     del best_parameters_dict[model_name][measure]
                     
 
                 print("Best parameters of: " , model_name)
-                print(best_parameters_dict[model_name])
+                # print(best_parameters_dict[model_name])
+                
 
             print("Testing with best parameters")
             #print(models)
             for name, model,_ in models:
+                
                 
                 best_parameter = best_parameters_dict[name]
                 
@@ -1353,6 +1302,7 @@ class fusionData:
                     test_metrics["RMSE"].append(rmse)
                     test_metrics["MAE"].append(mae)
                     test_metrics["R2 Score"].append(r2)
+                    # print(test_metrics)
 
                 
                 elif task_type == "classification":
@@ -1437,11 +1387,7 @@ class fusionData:
                     test_metrics["Kappa"].append(kappa)
 
                     #print("done")
-
-
-            
-
-            #print(test_metrics)
+            # print(test_metrics)
             # Convert dictionaries to pandas DataFrames
             test_df = pd.DataFrame(test_metrics)
             train_df = pd.DataFrame(train_metrics)

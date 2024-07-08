@@ -45,49 +45,49 @@ Linear methods
    of two sets of variables that are maximally correlated with each
    other. It is often used in multivariate data analysis to understand
    the relationships between two sets of variables.
-
-Non linear methods
-------------------
-
-1. **t-SNE (t-distributed Stochastic Neighbor Embedding)**: t-SNE is a
-   non-linear dimensionality reduction technique that preserves the
-   local structure of the data by embedding it in a lower-dimensional
-   space with a probability distribution that matches the pairwise
-   distances in the original space.
-2. **KPCA (Kernel Principal Component Analysis)**: KPCA is a non-linear
-   extension of PCA that uses a kernel function to map the data into a
-   higher-dimensional feature space where it is linearly separable. This
-   allows KPCA to capture complex, non-linear relationships in the data.
-3. **RKS (Random Kitchen Sinks)**: RKS is a non-linear dimensionality
-   reduction technique that uses random projections to approximate a
-   kernel function and map the data into a lower-dimensional feature
-   space. It is often used in machine learning to speed up kernel
-   methods.
-4. **SEM (Structural Equation Modeling)**: SEM is a statistical
-   technique that tests the causal relationships between multiple
-   variables using a combination of regression and factor analysis. It
-   is often used in social sciences to test theoretical models.
-5. **Isomap (Isometric Mapping)**: Isomap is a non-linear dimensionality
-   reduction technique that preserves the global structure of the data
-   by embedding it in a lower-dimensional space with a geodesic distance
-   that approximates the shortest path between points in the original
-   space.
-6. **LLE (Locally Linear Embedding)**: LLE is a non-linear
-   dimensionality reduction technique that preserves the local structure
-   of the data by reconstructing each point as a linear combination of
-   its neighbors and embedding it in a lower-dimensional space that
-   minimizes the reconstruction error.
-7. **Autoencoder**: An autoencoder is a type of neural network that
-   learns to encode the input data into a lower-dimensional latent
-   representation and decode it back to the original data, minimizing
-   the reconstruction error. It is often used in unsupervised learning
-   for dimensionality reduction or feature extraction.
-8. **PLSDA (Partial Least Squares Discriminant Analysis)**: PLSDA is a
+5. **PLSDA (Partial Least Squares Discriminant Analysis)**: PLSDA is a
    supervised dimensionality reduction technique that finds the linear
    combinations of the features that best explain both the variance and
    the correlation with the target variable. It is often used in
    chemometrics for classification or regression problems.
-9. **Tensor Decomposition**: Tensor Decomposition is a technique that
+
+Non linear methods
+------------------
+
+1. **AER (Autoencoder Reconstruction):** The AER method is a neural
+   network-based technique that generates embeddings by minimizing
+   information loss during the cross reconstruction of descriptors,
+   thereby providing a comprehensive and accurate representation of data
+   in a lower-dimensional space.
+2. **t-SNE (t-distributed Stochastic Neighbor Embedding)**: t-SNE is a
+   non-linear dimensionality reduction technique that preserves the
+   local structure of the data by embedding it in a lower-dimensional
+   space with a probability distribution that matches the pairwise
+   distances in the original space.
+3. **KPCA (Kernel Principal Component Analysis)**: KPCA is a non-linear
+   extension of PCA that uses a kernel function to map the data into a
+   higher-dimensional feature space where it is linearly separable. This
+   allows KPCA to capture complex, non-linear relationships in the data.
+4. **RKS (Random Kitchen Sinks)**: RKS is a non-linear dimensionality
+   reduction technique that uses random projections to approximate a
+   kernel function and map the data into a lower-dimensional feature
+   space. It is often used in machine learning to speed up kernel
+   methods.
+5. **SEM (Structural Equation Modeling)**: SEM is a statistical
+   technique that tests the causal relationships between multiple
+   variables using a combination of regression and factor analysis. It
+   is often used in social sciences to test theoretical models.
+6. **Isomap (Isometric Mapping)**: Isomap is a non-linear dimensionality
+   reduction technique that preserves the global structure of the data
+   by embedding it in a lower-dimensional space with a geodesic distance
+   that approximates the shortest path between points in the original
+   space.
+7. **LLE (Locally Linear Embedding)**: LLE is a non-linear
+   dimensionality reduction technique that preserves the local structure
+   of the data by reconstructing each point as a linear combination of
+   its neighbors and embedding it in a lower-dimensional space that
+   minimizes the reconstruction error.
+8. **Tensor Decomposition**: Tensor Decomposition is a technique that
    decomposes a multi-dimensional array (tensor) into a set of
    lower-dimensional arrays (factors) that capture the latent structure
    and interactions of the data. It is often used in machine learning to

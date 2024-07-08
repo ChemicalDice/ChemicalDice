@@ -130,11 +130,21 @@ dimensionality reduction technique that finds the linear combinations
 of two sets of variables that are maximally correlated with each
 other. It is often used in multivariate data analysis to understand
 the relationships between two sets of variables.</p></li>
+<li><p><strong>PLSDA (Partial Least Squares Discriminant Analysis)</strong>: PLSDA is a
+supervised dimensionality reduction technique that finds the linear
+combinations of the features that best explain both the variance and
+the correlation with the target variable. It is often used in
+chemometrics for classification or regression problems.</p></li>
 </ol>
 </section>
 <section id="non-linear-methods">
 <h2>Non linear methods<a class="headerlink" href="#non-linear-methods" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
+<li><p><strong>AER (Autoencoder Reconstruction):</strong> The AER method is a neural
+network-based technique that generates embeddings by minimizing
+information loss during the cross reconstruction of descriptors,
+thereby providing a comprehensive and accurate representation of data
+in a lower-dimensional space.</p></li>
 <li><p><strong>t-SNE (t-distributed Stochastic Neighbor Embedding)</strong>: t-SNE is a
 non-linear dimensionality reduction technique that preserves the
 local structure of the data by embedding it in a lower-dimensional
@@ -163,16 +173,6 @@ dimensionality reduction technique that preserves the local structure
 of the data by reconstructing each point as a linear combination of
 its neighbors and embedding it in a lower-dimensional space that
 minimizes the reconstruction error.</p></li>
-<li><p><strong>Autoencoder</strong>: An autoencoder is a type of neural network that
-learns to encode the input data into a lower-dimensional latent
-representation and decode it back to the original data, minimizing
-the reconstruction error. It is often used in unsupervised learning
-for dimensionality reduction or feature extraction.</p></li>
-<li><p><strong>PLSDA (Partial Least Squares Discriminant Analysis)</strong>: PLSDA is a
-supervised dimensionality reduction technique that finds the linear
-combinations of the features that best explain both the variance and
-the correlation with the target variable. It is often used in
-chemometrics for classification or regression problems.</p></li>
 <li><p><strong>Tensor Decomposition</strong>: Tensor Decomposition is a technique that
 decomposes a multi-dimensional array (tensor) into a set of
 lower-dimensional arrays (factors) that capture the latent structure

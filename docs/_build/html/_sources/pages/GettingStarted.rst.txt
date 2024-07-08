@@ -247,8 +247,8 @@ Data fusion will take all the data that is normalized in previous step
 and make a single fused data. The ``fuseFeatures`` method can be used to
 fuse the data and save it in a csv file. The fusion methods to use given
 by methods argument. Methods available for fusing data are ‘AER’, ‘pca’,
-‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’, ‘autoencoder’, and
-‘tensordecompose’. The components to keep from different data can be
+‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’ and ‘tensordecompose’.
+The number of components to keep from different data in fusion can be
 provided by ``n_components``\ aggumrent. Reduced dimensions to use for
 Autoencoder Reconstruction can be provided by ``AER_dim`` argument.
 Argument ``save_dir`` can be used to specify directory for saving the

@@ -41,7 +41,7 @@ using the following command:
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.0
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.1
    pip install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/rocm5.7
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==0.6.0 tensorly==0.8.1 transformers==4.40.1
@@ -199,8 +199,8 @@ Data fusion will take all the data that is normalized in previous step
 and make a single fused data. The ``fuseFeatures`` method can be used to
 fuse the data and save it in a csv file. The fusion methods to use given
 by methods argument. Methods available for fusing data are ‘AER’, ‘pca’,
-‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’, ‘autoencoder’, and
-‘tensordecompose’. The components to keep from different data can be
+‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’ and ‘tensordecompose’.
+The number of components to keep from different data in fusion can be
 provided by ``n_components``\ aggumrent. Reduced dimensions to use for
 Autoencoder Reconstruction can be provided by ``AER_dim`` argument.
 Argument ``save_dir`` can be used to specify directory for saving the

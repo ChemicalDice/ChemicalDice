@@ -73,10 +73,12 @@ Non linear methods
    kernel function and map the data into a lower-dimensional feature
    space. It is often used in machine learning to speed up kernel
    methods.
-5. **SEM (Structural Equation Modeling)**: SEM is a statistical
-   technique that tests the causal relationships between multiple
-   variables using a combination of regression and factor analysis. It
-   is often used in social sciences to test theoretical models.
+5. **SEM (SpectralEmbedding )**: Spectral Embedding is a dimensionality
+   reduction technique that uses the eigenvalues of a graph Laplacian to
+   map data into a lower-dimensional space. It preserves the local and
+   global structure of the data by capturing its intrinsic geometry.
+   This method is particularly effective for non-linear dimensionality
+   reduction and manifold learning.
 6. **Isomap (Isometric Mapping)**: Isomap is a non-linear dimensionality
    reduction technique that preserves the global structure of the data
    by embedding it in a lower-dimensional space with a geodesic distance

@@ -25,74 +25,39 @@ import requests
 
 
 
-
+MORSE_EXE = None
 
 def get_mopac_prerequisites():
-    """
-    Download and set up the prerequisites for MOPAC and Morse.
-
-    This function performs the following steps:
-    1. Downloads the MOPAC tarball from a specified URL.
-    2. Extracts the contents of the downloaded tarball.
-    3. For Windows systems, downloads a precompiled version of 3D Morse.
-    4. For non-Windows systems, downloads the source code of 3D Morse, modifies it to be compatible with the system, and compiles it.
-
-    The function prints messages indicating the progress of the setup process.
-
-    Steps:
-    -------
-    1. **Download MOPAC**: The MOPAC software is downloaded from its official GitHub release page.
-    2. **Extract MOPAC**: The downloaded tarball is extracted.
-    3. **Download/Compile 3D Morse**:
-       - For Windows: A precompiled executable is downloaded.
-       - For non-Windows: The source code is downloaded, necessary modifications are made, and the source code is compiled.
-
-    Downloads:
-    ----------
-    - MOPAC: https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-linux.tar.gz
-    - 3D Morse executable (Windows): https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe
-    - 3D Morse source code (non-Windows): https://raw.githubusercontent.com/devinyak/3dmorse/master/3dmorse.cpp
-    - Header files for compilation:
-        - tchar.h: https://home.cs.colorado.edu/~main/cs1300-old/include/tchar.h
-        - _mingw.h: https://home.cs.colorado.edu/~main/cs1300-old/include/_mingw.h
-
-    Modifications:
-    --------------
-    - The header file `tchar.h` is replaced with the downloaded version.
-    - The `3dmorse.cpp` file is modified to include the necessary headers for math functions.
-
-    Compilation:
-    ------------
-    - The `3dmorse.cpp` file is compiled using `g++` for non-Windows systems.
-
-    Cleanup:
-    --------
-    - Intermediate files used for compilation are deleted after the executable is created.
-
-    Prints:
-    -------
-    - Status messages indicating the progress of each step.
-
-    """
+    morse_exe_file= "3dmorse.exe"
     # URL of the file to be downloaded
-    url = "https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-linux.tar.gz"
-
     # Name of the file to save as
-    filename = "mopac-22.1.1-linux.tar.gz"
-
-    download_file(url, filename)
-
-
-
-    # Path to the tar.gz file
-    file_path = "mopac-22.1.1-linux.tar.gz"
-
-    extract_tar_gz(file_path)
-
-    print("Mopac is downloaded")
     if os.name == "nt":
-        urllib.request.urlretrieve("https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe", "3dmorse.exe")
-        # compiling 3D morse
+      result =subprocess.check_output(['mopac', '--version'])
+      
+      if result == b'MOPAC version 22.1.1 commit e7a5c3f6a4450286a1f770452b44e53be426fa8b\r\n':
+         print("Mopac is already installed ") 
+      else:
+         print("For windows please install MOPAC. Use following link to download exe file to install MOPAC file https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-win.ex")
+         raise ImportError("MOPAC is not installed.")
+
+      # url = "https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-win.exe"
+      # filename = "mopac-22.1.1-win.exe"
+      # download_file(url, filename)
+      
+      pass
+    else:
+      url = "https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-linux.tar.gz"
+      filename = "mopac-22.1.1-linux.tar.gz"
+      download_file(url, filename)
+      file_path = "mopac-22.1.1-linux.tar.gz"
+      extract_tar_gz(file_path)
+      print("Mopac is downloaded")
+
+    if os.name == "nt":
+        if os.path.exists(morse_exe_file):
+            print("Provided 3dmorse.exe file is present")
+        else:
+            raise ImportError("For windows please download 3dmorse.exe . Use the following link to download and provide it by keep the file in current directory. https://github.com/devinyak/3dmorse")
     else:
         urllib.request.urlretrieve("https://raw.githubusercontent.com/devinyak/3dmorse/master/3dmorse.cpp", "3dmorse.cpp")
 
@@ -115,10 +80,24 @@ def get_mopac_prerequisites():
         subprocess.run(['g++', '3dmorse.cpp', '-o', '3dmorse'])
         for file in ["3dmorse.cpp.bak","_mingw.h","tchar.h","3dmorse.cpp","tchar.h.bak"]:
             os.remove(file)
-    print("Morse is compiled")
+        print("Morse is compiled")
 
 
+import psutil
 
+def checkIfProcessRunning(processName):
+    '''
+    Check if there is any running process that contains the given name processName.
+    '''
+    #Iterate over the all the running process
+    for proc in psutil.process_iter():
+        try:
+            # Check if process name contains the given name string.
+            if processName.lower() in proc.name().lower():
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False;
 
 import multiprocessing
 cpu_to_use = multiprocessing.cpu_count() * 0.5
@@ -178,7 +157,60 @@ def descriptor_calculator(input_file,output_file, output_dir = "temp_data/mopfil
     f.write("\n")
   else:
     f = open(output_file,"a+")
+  for mol2file_name,id,smile in zip(mol2file_name_list, id_list, smiles_list):
+    try:
+      n+=1
+      if n < start_from:
+          print(n)
+          continue
+      total_charge,spin_multi= calculate_formalCharge_Multiplicity(mol2file_name,"mol2")
+      spin_multi_dict={1:"SINGLET", 2:"DOUBLET", 3:"TRIPLET", 4:"QUARTET", 5:"QUINTET", 6:"SEXTET", 7:"SEPTET", 8:"OCTET"}
+      spin_multi_name=spin_multi_dict[spin_multi]
+      
 
+      # Read mo2 file
+      if os.path.exists(mol2file_name):
+        for mol in pybel.readfile("mol2", mol2file_name):
+            mymol = mol
+
+        mopac_input = os.path.join(output_dir,id+".mop")
+
+        #   if os.path.exists(mopac_input):
+        #       continue
+        # Making mopac input file for calculation type PM7
+        calc_type=" PM7"
+
+        key_parameter=" AUX LARGE CHARGE="+str(total_charge)+" "+spin_multi_name+calc_type+" THREADS="+str(n_threads)+" OPT"+"\n"+id
+        mymol.write("mopcrt", mopac_input ,opt={"k":key_parameter},overwrite=True)
+
+        mopac_output = os.path.join(output_dir,id+".arc")
+        
+        if os.name == "nt":
+          mopac_executable = "mopac"
+        else:
+          mopac_executable = 'mopac-22.1.1-linux/bin/mopac'
+
+        if os.path.exists(mopac_output):
+          pass
+        else:
+          #cmd = ['mopac', mopac_input]
+          if os.name == 'nt':
+            rocess = subprocess.Popen([mopac_executable, mopac_input])
+          else:
+            process = subprocess.Popen([mopac_executable, mopac_input])
+            cpu_percent = str(ncpu*100)
+            cpulimit_process = subprocess.Popen(['cpulimit', '-p', str(process.pid), '-l', cpu_percent])
+            process.wait()
+            cpulimit_process.terminate()
+      
+
+    except Exception as e:
+      print(" Error in running mopac ",end="\n")
+      print(id)
+      print(e)
+  while checkIfProcessRunning("mopac.exe"):
+     continue
+    
   for mol2file_name,id,smile in zip(mol2file_name_list, id_list, smiles_list):
     # print("=",end="")
     try:
@@ -186,76 +218,38 @@ def descriptor_calculator(input_file,output_file, output_dir = "temp_data/mopfil
       if n < start_from:
           print(n)
           continue
-      
-      #mol2file_name = "tempfiles/mol2files/smile"+str(n)+".mol2"
-      #m = Chem.MolFromMol2File(mol2file_name, sanitize=False, removeHs=False)
-
-      # calculating formal charge and spin multiplicity
-      total_charge,spin_multi= calculate_formalCharge_Multiplicity(mol2file_name,"mol2")
-      spin_multi_dict={1:"SINGLET", 2:"DOUBLET", 3:"TRIPLET", 4:"QUARTET", 5:"QUINTET", 6:"SEXTET", 7:"SEPTET", 8:"OCTET"}
-      spin_multi_name=spin_multi_dict[spin_multi]
-
-      # Read mo2 file
-      for mol in pybel.readfile("mol2", mol2file_name):
-          mymol = mol
-
-      mopac_input = os.path.join(output_dir,id+".mop")
-
-      #   if os.path.exists(mopac_input):
-      #       continue
-      # Making mopac input file for calculation type PM7
-      calc_type=" PM7"
-
-      key_parameter=" AUX LARGE CHARGE="+str(total_charge)+" "+spin_multi_name+calc_type+" THREADS="+str(n_threads)+" OPT"+"\n"+id
-      mymol.write("mopcrt", mopac_input ,opt={"k":key_parameter},overwrite=True)
-
       mopac_output = os.path.join(output_dir,id+".arc")
-
-      mopac_executable = 'mopac-22.1.1-linux/bin/mopac'
-
       if os.path.exists(mopac_output):
+        # reading descriptor data from file
+        desc_data=CalculateBasicQC(ReadFile(filename=mopac_output, mol_name = id,smile=smile))
+
+        morse_file = os.path.join(output_dir,id+".csv")
+
+        mopac_output = os.path.join(output_dir,id+".out")
+
+        
+        if os.name == "nt":
+          if os.path.exists("3dmorse.exe"):
+              pass
+          else:
+              raise ImportError("For windows please download 3dmorse.exe . Use the following link to download and provide it by keep the file in current directory. https://github.com/devinyak/3dmorse")
+        # calculate morse descriptors
+        if os.name == "nt":
+          subprocess.run(["3dmorse.exe", mopac_output, morse_file])
+        else:
+          subprocess.run(['./3dmorse',mopac_output, morse_file])
+        morse_desc = pd.read_csv(morse_file)
+        morse_dict = morse_desc.to_dict('records')[0]
+        desc_data.update(morse_dict)
+
+        
+        row_list = list(desc_data.values())
+        row_list = [str(x) for x in row_list]
+        row_str = ",".join(row_list)
+        f.write(row_str)
+        f.write("\n")
+      else:
         pass
-      else:
-        #cmd = ['mopac', mopac_input]
-        process = subprocess.Popen([mopac_executable, mopac_input])
-        cpu_percent = str(ncpu*100)
-        cpulimit_process = subprocess.Popen(['cpulimit', '-p', str(process.pid), '-l', cpu_percent])
-        process.wait()
-        cpulimit_process.terminate()
-
-      # running mopac using
-      #cmd = ['mopac', mopac_input]
-      #p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-      #p.wait()
-
-      mopac_output = os.path.join(output_dir,id+".arc")
-
-
-
-      # reading descriptor data from file
-      desc_data=CalculateBasicQC(ReadFile(filename=mopac_output, mol_name = id,smile=smile))
-
-      morse_file = os.path.join(output_dir,id+".csv")
-
-      mopac_output = os.path.join(output_dir,id+".out")
-
-      
-
-      # calculate morse descriptors
-      if os.name == "nt":
-        subprocess.run(['./3dmorse',mopac_output, morse_file])
-      else:
-        subprocess.run(['./3dmorse',mopac_output, morse_file])
-      morse_desc = pd.read_csv(morse_file)
-      morse_dict = morse_desc.to_dict('records')[0]
-      desc_data.update(morse_dict)
-
-      
-      row_list = list(desc_data.values())
-      row_list = [str(x) for x in row_list]
-      row_str = ",".join(row_list)
-      f.write(row_str)
-      f.write("\n")
       #print("=",end="")
     except Exception as e:
       print(" Error in descriptor calculation ",end="\n")

@@ -52,19 +52,23 @@ from rdkit.Chem import Draw
 
 def smile_to_img(smiles_list,smiles_id_list,output_dir):
     image_file_paths = []
+    
     for smis, index in zip(smiles_list,smiles_id_list):
-        file_path = os.path.join(output_dir,index + ".png")
-        #image = Smiles2Img2(smis, , savePath=file_path)
-        size=224
-        mol = Chem.MolFromSmiles(smis)
-        img = Draw.MolsToGridImage([mol], molsPerRow=1, subImgSize=(size, size),returnPNG=False)
-        if file_path is not None:
+        if is_valid_smiles(smis):
+            file_path = os.path.join(output_dir,index + ".png")
+            #image = Smiles2Img2(smis, , savePath=file_path)
+            size=224
+            mol = Chem.MolFromSmiles(smis)
+            img = Draw.MolsToGridImage([mol], molsPerRow=1, subImgSize=(size, size),returnPNG=False)
             img.save(file_path)
-        if img is None:
-            print("Error in smile to image for ", index, smis)
+            if img is None:
+                print("Error in smile to image for ", index, smis)
+                image_file_paths.append('')
+            else:
+                image_file_paths.append(file_path)
+        else:
             image_file_paths.append('')
-        else:    
-            image_file_paths.append(file_path)
+
     return image_file_paths
 
 
@@ -84,23 +88,10 @@ def add_image_files(input_file, output_dir):
     else:
         smiles_df['id'] = [ "C"+str(id) for id in range(len(smiles_list))]
         smiles_id_list = smiles_df['id']
-    
-    smiles_list_valid = []
-    smiles_id_list_valid = []
-    for smiles,id in zip(smiles_list,smiles_id_list):
-        if is_valid_smiles(smiles):
-            smiles_list_valid.append(smiles)
-            smiles_id_list_valid.append(id)
-        else:
-            print("This is a invalid smiles: ", smiles)
-    
-    smiles_list = smiles_list_valid
-    smiles_id_list = smiles_id_list_valid
-
     image_file_paths = smile_to_img(smiles_list, smiles_id_list, output_dir)
     smiles_df['image_files'] = image_file_paths
     smiles_df.to_csv(input_file,index=False)
 
-import pkg_resources
+# import pkg_resources
 
 # Get the absolute path of the checkpoint file

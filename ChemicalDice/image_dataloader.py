@@ -113,10 +113,14 @@ def load_filenames_and_labels_multitask2(txt_file):
     df = pd.read_csv(txt_file)
     #index = df["id"].values.astype(int)
     names = df['image_files'].to_list()
-    names = [s for s in names if s]
+    names2 = []
+    for name in names:
+        if name != "":
+            names2.append(name)
+    
     #names = filter_existing_files(names)
     # assert len(index) == labels.shape[0] == len(names)
-    return names
+    return names2
 
 
 

@@ -57,7 +57,7 @@ def get_grover_prerequisites(path):
         pass
     else:
         # URL of the file to be downloaded
-        url = "https://ai.tencent.com/ailab/ml/ml-data/grover-models/pretrain/grover_large.tar.gz"
+        url = "https://huggingface.co/SuvenduK/grover/resolve/main/grover_large.tar.gz"
         # Name of the file to save as
         filename = os.path.join(path,"grover_large.tar.gz")
         download_file(url, filename)

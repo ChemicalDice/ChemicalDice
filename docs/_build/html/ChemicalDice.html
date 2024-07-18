@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChemicalDice package &mdash; ChemicalDice 0.0.2 documentation</title>
+  <title>ChemicalDice package &mdash; ChemicalDice 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=e3a6060d"></script>
+        <script src="_static/documentation_options.js?v=47de8214"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -71,6 +71,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-ChemicalDice.quantum">quantum module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#ChemicalDice.quantum.get_mopac_prerequisites"><code class="docutils literal notranslate"><span class="pre">get_mopac_prerequisites()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ChemicalDice.quantum.checkIfProcessRunning"><code class="docutils literal notranslate"><span class="pre">checkIfProcessRunning()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ChemicalDice.quantum.descriptor_calculator"><code class="docutils literal notranslate"><span class="pre">descriptor_calculator()</span></code></a></li>
 </ul>
 </li>
@@ -580,64 +581,12 @@ are calculated using the mordred package.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ChemicalDice.quantum.get_mopac_prerequisites">
 <span class="sig-prename descclassname"><span class="pre">ChemicalDice.quantum.</span></span><span class="sig-name descname"><span class="pre">get_mopac_prerequisites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/quantum.html#get_mopac_prerequisites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.quantum.get_mopac_prerequisites" title="Link to this definition"></a></dt>
-<dd><p>Download and set up the prerequisites for MOPAC and Morse.</p>
-<p>This function performs the following steps:
-1. Downloads the MOPAC tarball from a specified URL.
-2. Extracts the contents of the downloaded tarball.
-3. For Windows systems, downloads a precompiled version of 3D Morse.
-4. For non-Windows systems, downloads the source code of 3D Morse, modifies it to be compatible with the system, and compiles it.</p>
-<p>The function prints messages indicating the progress of the setup process.</p>
-<section id="steps">
-<h3>Steps:<a class="headerlink" href="#steps" title="Link to this heading"></a></h3>
-<ol class="arabic simple">
-<li><p><strong>Download MOPAC</strong>: The MOPAC software is downloaded from its official GitHub release page.</p></li>
-<li><p><strong>Extract MOPAC</strong>: The downloaded tarball is extracted.</p></li>
-<li><p><strong>Download/Compile 3D Morse</strong>:
-- For Windows: A precompiled executable is downloaded.
-- For non-Windows: The source code is downloaded, necessary modifications are made, and the source code is compiled.</p></li>
-</ol>
-</section>
-<section id="downloads">
-<h3>Downloads:<a class="headerlink" href="#downloads" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>MOPAC: <a class="reference external" href="https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-linux.tar.gz">https://github.com/openmopac/mopac/releases/download/v22.1.1/mopac-22.1.1-linux.tar.gz</a></p></li>
-<li><p>3D Morse executable (Windows): <a class="reference external" href="https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe">https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe</a></p></li>
-<li><p>3D Morse source code (non-Windows): <a class="reference external" href="https://raw.githubusercontent.com/devinyak/3dmorse/master/3dmorse.cpp">https://raw.githubusercontent.com/devinyak/3dmorse/master/3dmorse.cpp</a></p></li>
-<li><dl class="simple">
-<dt>Header files for compilation:</dt><dd><ul>
-<li><p>tchar.h: <a class="reference external" href="https://home.cs.colorado.edu/~main/cs1300-old/include/tchar.h">https://home.cs.colorado.edu/~main/cs1300-old/include/tchar.h</a></p></li>
-<li><p>_mingw.h: <a class="reference external" href="https://home.cs.colorado.edu/~main/cs1300-old/include/_mingw.h">https://home.cs.colorado.edu/~main/cs1300-old/include/_mingw.h</a></p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</section>
-<section id="modifications">
-<h3>Modifications:<a class="headerlink" href="#modifications" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>The header file <cite>tchar.h</cite> is replaced with the downloaded version.</p></li>
-<li><p>The <cite>3dmorse.cpp</cite> file is modified to include the necessary headers for math functions.</p></li>
-</ul>
-</section>
-<section id="compilation">
-<h3>Compilation:<a class="headerlink" href="#compilation" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>The <cite>3dmorse.cpp</cite> file is compiled using <cite>g++</cite> for non-Windows systems.</p></li>
-</ul>
-</section>
-<section id="cleanup">
-<h3>Cleanup:<a class="headerlink" href="#cleanup" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>Intermediate files used for compilation are deleted after the executable is created.</p></li>
-</ul>
-</section>
-<section id="prints">
-<h3>Prints:<a class="headerlink" href="#prints" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>Status messages indicating the progress of each step.</p></li>
-</ul>
-</section>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ChemicalDice.quantum.checkIfProcessRunning">
+<span class="sig-prename descclassname"><span class="pre">ChemicalDice.quantum.</span></span><span class="sig-name descname"><span class="pre">checkIfProcessRunning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/quantum.html#checkIfProcessRunning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.quantum.checkIfProcessRunning" title="Link to this definition"></a></dt>
+<dd><p>Check if there is any running process that contains the given name processName.</p>
 </dd></dl>
 
 <dl class="py function">

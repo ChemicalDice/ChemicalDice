@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChemicalDice.ImageMol &mdash; ChemicalDice 0.0.2 documentation</title>
+  <title>ChemicalDice.ImageMol &mdash; ChemicalDice 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+        <script src="../../_static/documentation_options.js?v=47de8214"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -150,6 +150,136 @@
 
 
 <span class="c1"># Get the absolute path of the checkpoint file</span>
+<span class="c1"># def image_to_embeddings(input_file, output_file_name):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Convert images referenced in an input CSV file to embeddings using the ImageMol model and save them to a CSV file.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     input_file : str</span>
+<span class="c1">#         Path to the input CSV file containing references to images.</span>
+<span class="c1">#     output_file_name : str</span>
+<span class="c1">#         Path to the output CSV file where the embeddings will be saved.</span>
+
+<span class="c1">#     Returns</span>
+<span class="c1">#     -------</span>
+<span class="c1">#     None</span>
+
+<span class="c1">#     Notes</span>
+<span class="c1">#     -----</span>
+<span class="c1">#     This function assumes the existence of pretrained models and required setup for ImageMol. </span>
+<span class="c1">#     It processes images from the input CSV file, extracts embeddings using a pretrained ResNet18 model, </span>
+<span class="c1">#     and saves the embeddings to the specified output CSV file.</span>
+
+<span class="c1">#     Raises</span>
+<span class="c1">#     ------</span>
+<span class="c1">#     FileNotFoundError</span>
+<span class="c1">#         If the input CSV file (`input_file`) does not exist.</span>
+
+<span class="c1">#     IOError</span>
+<span class="c1">#         If there is an issue with reading the input CSV file or writing the output CSV file.</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     #csv_filename = input_file</span>
+<span class="c1">#     #image_folder_224 = input_dir</span>
+<span class="c1">#     add_image_files(input_file, output_dir = &quot;temp_data/images/&quot;)</span>
+<span class="c1">#     checkpoint_path = get_imagemol_prerequisites(&quot;temp_data/&quot;)</span>
+<span class="c1">#     resume = checkpoint_path</span>
+<span class="c1">#     image_model = &quot;ResNet18&quot;</span>
+<span class="c1">#     imageSize = 224</span>
+<span class="c1">#     ngpu = 1</span>
+<span class="c1">#     runseed=2021</span>
+<span class="c1">#     workers = 2</span>
+
+<span class="c1">#     os.environ[&#39;CUDA_VISIBLE_DEVICES&#39;] = &#39;0&#39;</span>
+<span class="c1">#     #image_folder, txt_file = get_datasets2(dataset=csv_filename, dataroot=image_folder_224, data_type=&quot;processed&quot;)</span>
+<span class="c1">#     verbose = False</span>
+
+<span class="c1">#     device, device_ids = setup_device(ngpu)</span>
+
+<span class="c1">#     # fix random seeds</span>
+<span class="c1">#     fix_train_random_seed()</span>
+
+<span class="c1">#     # architecture name</span>
+<span class="c1">#     if verbose:</span>
+<span class="c1">#         print(&#39;Architecture: {}&#39;.format(image_model))</span>
+<span class="c1">#     num_tasks = 10000</span>
+<span class="c1">#     model = load_model(image_model, imageSize=imageSize, num_classes=num_tasks)</span>
+
+<span class="c1">#     #print(&quot;++++++++++++++++++++++++++&quot;)</span>
+<span class="c1">#     if resume:</span>
+<span class="c1">#         if os.path.isfile(resume):  # only support ResNet18 when loading resume</span>
+<span class="c1">#             #print(&quot;=&gt; loading checkpoint &#39;{}&#39;&quot;.format(resume))</span>
+<span class="c1">#             if torch.cuda.is_available():</span>
+<span class="c1">#               checkpoint = torch.load(resume)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#               checkpoint = torch.load(resume, map_location=torch.device(&#39;cpu&#39;))</span>
+<span class="c1">#             ckp_keys = list(checkpoint[&#39;state_dict&#39;])</span>
+<span class="c1">#             cur_keys = list(model.state_dict())</span>
+<span class="c1">#             model_sd = model.state_dict()</span>
+<span class="c1">#             if image_model == &quot;ResNet18&quot;:</span>
+<span class="c1">#                 ckp_keys = ckp_keys[:120]</span>
+<span class="c1">#                 cur_keys = cur_keys[:120]</span>
+
+<span class="c1">#             for ckp_key, cur_key in zip(ckp_keys, cur_keys):</span>
+<span class="c1">#                 model_sd[cur_key] = checkpoint[&#39;state_dict&#39;][ckp_key]</span>
+
+<span class="c1">#             model.load_state_dict(model_sd)</span>
+<span class="c1">#             arch = checkpoint[&#39;arch&#39;]</span>
+<span class="c1">#             #print(&quot;resume model info: arch: {}&quot;.format(arch))</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             print(&quot;=&gt; no checkpoint found at &#39;{}&#39;&quot;.format(resume))</span>
+    
+<span class="c1">#     if torch.cuda.is_available():</span>
+<span class="c1">#       model = model.cuda()</span>
+<span class="c1">#     else:</span>
+<span class="c1">#       model = model</span>
+
+<span class="c1">#     if len(device_ids) &gt; 1:</span>
+<span class="c1">#         model = torch.nn.DataParallel(model, device_ids=device_ids)</span>
+
+<span class="c1">#     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],</span>
+<span class="c1">#                                      std=[0.229, 0.224, 0.225])</span>
+<span class="c1">#     img_transformer_test = [transforms.CenterCrop(imageSize), transforms.ToTensor()]</span>
+
+<span class="c1">#     names = load_filenames_and_labels_multitask2(txt_file=input_file)</span>
+
+<span class="c1">#     names = np.array(names)</span>
+<span class="c1">#     num_tasks = len(names)</span>
+<span class="c1">#     test_dataset = ImageDataset2(names, img_transformer=transforms.Compose(img_transformer_test),</span>
+<span class="c1">#                                 normalize=normalize, ret_index=False, args=None)</span>
+<span class="c1">#     test_dataloader = torch.utils.data.DataLoader(test_dataset,</span>
+<span class="c1">#                                                   batch_size=1,</span>
+<span class="c1">#                                                   shuffle=False,</span>
+<span class="c1">#                                                   num_workers=workers,</span>
+<span class="c1">#                                                   pin_memory=True)</span>
+
+
+<span class="c1">#     # Extract embeddings from the last layer of predictions</span>
+<span class="c1">#     embeddings = []</span>
+<span class="c1">#     img_names = []</span>
+<span class="c1">#     with torch.no_grad():</span>
+<span class="c1">#         model.eval()</span>
+<span class="c1">#         for images, img_name in test_dataloader:</span>
+<span class="c1">#             images = images.to(device)</span>
+<span class="c1">#             outputs = model(images)</span>
+<span class="c1">#             embeddings.append(outputs.cpu().numpy())</span>
+<span class="c1">#             print(len(outputs),img_name</span>
+<span class="c1">#             if len(outputs) &gt; 0:</span>
+<span class="c1">#                 img_names.append(img_name)</span>
+
+<span class="c1">#     # Concatenate embeddings from all batches</span>
+<span class="c1">#     embeddings = np.concatenate(embeddings, axis=0)</span>
+<span class="c1">#     df = pd.DataFrame(embeddings)</span>
+<span class="c1">#     df = df.add_prefix(&#39;ImageMol_&#39;)</span>
+<span class="c1">#     filenames_without_extension = [get_filename_without_extension(path) for path in img_names]</span>
+
+
+<span class="c1">#     # writeEmbeddingsIntoFile(&quot;.&quot;, f&#39;ImageMol.csv&#39;, ids, embeddings)</span>
+
+<span class="c1">#     df.index = filenames_without_extension</span>
+<span class="c1">#     df.index.name = &#39;id&#39;</span>
+<span class="c1">#     df.to_csv(output_file_name)</span>
 
 
 <div class="viewcode-block" id="image_to_embeddings">
@@ -249,7 +379,9 @@
     <span class="n">names</span> <span class="o">=</span> <span class="n">load_filenames_and_labels_multitask2</span><span class="p">(</span><span class="n">txt_file</span><span class="o">=</span><span class="n">input_file</span><span class="p">)</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
-    <span class="n">num_tasks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;nan&quot;</span><span class="p">]</span>
+
+       
     <span class="n">test_dataset</span> <span class="o">=</span> <span class="n">ImageDataset2</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">img_transformer</span><span class="o">=</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span><span class="n">img_transformer_test</span><span class="p">),</span>
                                 <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span> <span class="n">ret_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">test_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">,</span>
@@ -274,12 +406,12 @@
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s1">&#39;ImageMol_&#39;</span><span class="p">)</span>
     <span class="n">filenames_without_extension</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_filename_without_extension</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
 
-    <span class="n">ids</span> <span class="o">=</span> <span class="n">filenames_without_extension</span>
-    <span class="c1"># writeEmbeddingsIntoFile(&quot;.&quot;, f&#39;ImageMol.csv&#39;, ids, embeddings)</span>
+
 
     <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">filenames_without_extension</span>
     <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file_name</span><span class="p">)</span></div>
+    <span class="c1"># df.to_csv(output_file_name)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file_name</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span></div>
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; ChemicalDice 0.0.2 documentation</title>
+  <title>Installation &mdash; ChemicalDice 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=e3a6060d"></script>
+        <script src="../_static/documentation_options.js?v=47de8214"></script>
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -48,8 +48,16 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#environment-set-up">Environment set up</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-packages">Install packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-linux"><strong>For Linux</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#environment-set-up">Environment set up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-packages">Install packages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#for-windows"><strong>For windows</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#environment-set-up-1">Environment set up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-packages-1">Install packages</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="GettingStarted.html">Getting started</a></li>
@@ -88,8 +96,10 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="for-linux">
+<h2><strong>For Linux</strong><a class="headerlink" href="#for-linux" title="Link to this heading"></a></h2>
 <section id="environment-set-up">
-<h2>Environment set up<a class="headerlink" href="#environment-set-up" title="Link to this heading"></a></h2>
+<h3>Environment set up<a class="headerlink" href="#environment-set-up" title="Link to this heading"></a></h3>
 <p>To setup an environment to run ChemicalDice you can install miniconda
 using command.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -104,22 +114,72 @@ conda<span class="w"> </span>activate<span class="w"> </span>chemicaldice
 </div>
 </section>
 <section id="install-packages">
-<h2>Install packages<a class="headerlink" href="#install-packages" title="Link to this heading"></a></h2>
+<h3>Install packages<a class="headerlink" href="#install-packages" title="Link to this heading"></a></h3>
 <p>To use the <strong>ChemicalDice</strong> package, you need to install it along with
 its dependencies. You can install ChemicalDice and its dependencies
-using the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span><span class="nv">ChemicalDice</span><span class="o">==</span><span class="m">0</span>.6.2
-pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/rocm5.7
+using the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span><span class="nv">ChemicalDice</span><span class="o">==</span><span class="m">0</span>.6.4
 pip<span class="w"> </span>install<span class="w"> </span><span class="nv">multitasking</span><span class="o">==</span><span class="m">0</span>.0.11<span class="w"> </span><span class="nv">pandas</span><span class="o">==</span><span class="m">2</span>.0.3<span class="w"> </span>scikit-learn<span class="o">==</span><span class="m">1</span>.2.2<span class="w"> </span><span class="nv">seaborn</span><span class="o">==</span><span class="m">0</span>.13.1<span class="w"> </span><span class="nv">tqdm</span><span class="o">==</span><span class="m">4</span>.66.4<span class="w"> </span><span class="nv">xgboost</span><span class="o">==</span><span class="m">2</span>.0.3
-pip<span class="w"> </span>install<span class="w"> </span><span class="nv">rdkit</span><span class="o">==</span><span class="m">2023</span>.9.6<span class="w"> </span><span class="nv">signaturizer</span><span class="o">==</span><span class="m">1</span>.1.14<span class="w"> </span><span class="nv">descriptastorus</span><span class="o">==</span><span class="m">2</span>.6.1<span class="w"> </span><span class="nv">mordred</span><span class="o">==</span><span class="m">0</span>.6.0<span class="w"> </span><span class="nv">tensorly</span><span class="o">==</span><span class="m">0</span>.8.1<span class="w"> </span><span class="nv">transformers</span><span class="o">==</span><span class="m">4</span>.40.1
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">rdkit</span><span class="o">==</span><span class="m">2023</span>.9.6<span class="w"> </span><span class="nv">signaturizer</span><span class="o">==</span><span class="m">1</span>.1.14<span class="w"> </span><span class="nv">descriptastorus</span><span class="o">==</span><span class="m">2</span>.6.1<span class="w"> </span><span class="nv">mordred</span><span class="o">==</span><span class="m">1</span>.2.0<span class="w"> </span><span class="nv">tensorly</span><span class="o">==</span><span class="m">0</span>.8.1<span class="w"> </span><span class="nv">transformers</span><span class="o">==</span><span class="m">4</span>.40.1
 pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="nv">tensorflow</span><span class="o">==</span><span class="m">2</span>.15
 conda<span class="w"> </span>install<span class="w"> </span>conda-forge::openbabel
 conda<span class="w"> </span>install<span class="w"> </span>conda-forge::cpulimit
 </pre></div>
 </div>
-<p>This command installs Chemicaldice along with the required dependencies.
-Make sure to have the appropriate versions of these packages compatible
-with ChemicalDice.</p>
+<p>The pytorch package need to installed according to your versions of cuda
+( computers with GPU ) and for computers with CPU only use the last
+command.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># ROCM 5.7</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/rocm5.7
+<span class="c1"># CUDA 11.8</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu118
+<span class="c1"># CUDA 12.1</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu121
+<span class="c1"># CPU only</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+</pre></div>
+</div>
+</section>
+</section>
+<section id="for-windows">
+<h2><strong>For windows</strong><a class="headerlink" href="#for-windows" title="Link to this heading"></a></h2>
+<section id="environment-set-up-1">
+<span id="id1"></span><h3>Environment set up<a class="headerlink" href="#environment-set-up-1" title="Link to this heading"></a></h3>
+<p>To setup an environment to run ChemicalDice you have to get three
+things.</p>
+<ol class="arabic simple">
+<li><p>You can install miniconda using the installer given in the following
+web page <a class="reference external" href="https://docs.anaconda.com/miniconda/miniconda-install/">https://docs.anaconda.com/miniconda/miniconda-install/</a></p></li>
+<li><p>You. also need to MOPAC software which you can download and install
+using latest installer. <a class="reference external" href="https://github.com/openmopac/MOPAC/releases">https://github.com/openmopac/MOPAC/releases</a>.</p></li>
+<li><p>For windows system you also need to keep 3dmorse.exe for quantum
+descriptor in your current directory. You can download 3dmorse.exe
+from this GitHub repository
+<a class="reference external" href="https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe">https://github.com/devinyak/3dmorse/blob/master/3dmorse.exe</a>.</p></li>
+</ol>
+</section>
+<section id="install-packages-1">
+<span id="id2"></span><h3>Install packages<a class="headerlink" href="#install-packages-1" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span><span class="nv">ChemicalDice</span><span class="o">==</span><span class="m">0</span>.6.4
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">multitasking</span><span class="o">==</span><span class="m">0</span>.0.11<span class="w"> </span><span class="nv">pandas</span><span class="o">==</span><span class="m">2</span>.0.3<span class="w"> </span>scikit-learn<span class="o">==</span><span class="m">1</span>.2.2<span class="w"> </span><span class="nv">seaborn</span><span class="o">==</span><span class="m">0</span>.13.1<span class="w"> </span><span class="nv">tqdm</span><span class="o">==</span><span class="m">4</span>.66.4<span class="w"> </span><span class="nv">xgboost</span><span class="o">==</span><span class="m">2</span>.0.3
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">rdkit</span><span class="o">==</span><span class="m">2023</span>.9.6<span class="w"> </span><span class="nv">signaturizer</span><span class="o">==</span><span class="m">1</span>.1.14<span class="w"> </span><span class="nv">descriptastorus</span><span class="o">==</span><span class="m">2</span>.6.1<span class="w"> </span><span class="nv">mordred</span><span class="o">==</span><span class="m">1</span>.2.0<span class="w"> </span><span class="nv">tensorly</span><span class="o">==</span><span class="m">0</span>.8.1<span class="w"> </span><span class="nv">transformers</span><span class="o">==</span><span class="m">4</span>.40.1
+pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="nv">tensorflow</span><span class="o">==</span><span class="m">2</span>.15
+conda<span class="w"> </span>install<span class="w"> </span>conda-forge::openbabel
+pip<span class="w"> </span>install<span class="w"> </span>psutil
+</pre></div>
+</div>
+<p>The pytorch package need to installed according to your versions of cuda
+( computers with GPU ) and for computers with CPU only use the last
+command.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># CUDA 11.8</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu118
+<span class="c1"># CUDA 12.1</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu121
+<span class="c1"># CPU only</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.17.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.2.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 

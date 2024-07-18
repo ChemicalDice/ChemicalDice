@@ -9,7 +9,7 @@ All the descriptors can be using the following line of code
 .. code:: python
 
    # create a directory for storing descriptors filefrom ChemicalDice 
-   import smiles_preprocess, bioactivity, chemberta, Grover, ImageMol, chemical, quantum
+   from ChemicalDice import smiles_preprocess, bioactivity, chemberta, Grover, ImageMol, chemical, quantum
    import os
    os.mkdir("Chemicaldice_data")
    # download prerequisites for quantum, grover and ImageMol
@@ -235,7 +235,7 @@ or ‘max’
 .. code:: python
 
    # Transform data
-   fusiondata.transform_df(transformation_type ='log')
+   fusiondata.transform_data(transformation_type ='log')
 
 ``transformation_type`` can be one of these ‘cubicroot’, ‘log10’, ‘log’,
 ‘log2’, ‘sqrt’, ‘powertransformer’, or ‘quantiletransformer’.

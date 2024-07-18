@@ -30,7 +30,10 @@ def clear_and_process_data(csv_files: Dict[str, str], id_column: str) -> Dict[st
     for dataset_name, file_path in csv_files.items():
         try:
             # Read CSV file into a Pandas DataFrame
-            df = pd.read_csv(file_path)
+            if dataset_name.lower() == "imagemol":
+                df = pd.read_csv(file_path,sep="\t")
+            else:
+                df = pd.read_csv(file_path)
 
             # Set specified ID column as the index
             df.set_index(id_column, inplace=True)

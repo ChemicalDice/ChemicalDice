@@ -16,7 +16,7 @@ sys.path.extend([os.path.abspath('..'),       # import metadata
 project = 'ChemicalDice'
 copyright = '2024, Suvendu Kumar'
 author = 'Suvendu Kumar'
-release = '0.0.2'
+release = '0.0.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

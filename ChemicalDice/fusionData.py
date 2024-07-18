@@ -687,69 +687,42 @@ class fusionData:
         self.task_type = task_type
         self.folds = folds
         if task_type == "classification":
+            classifiers = [
+                ("Logistic Regression", LogisticRegression()),
+                ("Decision Tree", DecisionTreeClassifier()),
+                ("Random Forest", RandomForestClassifier()),
+                ("Support Vector Machine", SVC(probability=True)),
+                ("Naive Bayes", GaussianNB()),
+                ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
+                ("MLP", MLPClassifier(alpha=1, max_iter=1000)),
+                ("QDA", QuadraticDiscriminantAnalysis()),
+                ("AdaBoost", AdaBoostClassifier()),
+                ("Extra Trees", ExtraTreesClassifier()),
+                ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
+            ]
             if models == None:
-                models = [
-                    ("Logistic Regression", LogisticRegression()),
-                    ("Decision Tree", DecisionTreeClassifier()),
-                    ("Random Forest", RandomForestClassifier()),
-                    ("Support Vector Machine", SVC(probability=True)),
-                    ("Naive Bayes", GaussianNB()),
-                    ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
-                    ("MLP", MLPClassifier(alpha=1, max_iter=1000)),
-                    ("QDA", QuadraticDiscriminantAnalysis()),
-                    ("AdaBoost", AdaBoostClassifier()),
-                    ("Extra Trees", ExtraTreesClassifier()),
-                    ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
-                ]
+                models =classifiers
             else:
-                classifiers = [
-                    ("Logistic Regression", LogisticRegression()),
-                    ("Decision Tree", DecisionTreeClassifier()),
-                    ("Random Forest", RandomForestClassifier()),
-                    ("Support Vector Machine", SVC(probability=True)),
-                    ("Naive Bayes", GaussianNB()),
-                    ("KNN", KNeighborsClassifier(leaf_size=1, n_neighbors=11, p=3, weights='distance')),
-                    ("NeuralNet", MLPClassifier(alpha=1, max_iter=1000)),
-                    ("QDA", QuadraticDiscriminantAnalysis()),
-                    ("AdaBoost", AdaBoostClassifier()),
-                    ("Extra Trees", ExtraTreesClassifier()),
-                    ("XGBoost", XGBClassifier(use_label_encoder=False, eval_metric='logloss'))
-                ]
                 models = [clf for clf in classifiers if clf[0] in models]
         elif task_type == "regression":
+                regressors = [
+                    ("Linear Regression", LinearRegression()),
+                    ("Ridge", Ridge()),
+                    ("Lasso", Lasso()),
+                    ("ElasticNet", ElasticNet()),
+                    ("Decision Tree", DecisionTreeRegressor()),
+                    ("Random Forest", RandomForestRegressor()),
+                    ("Gradient Boosting", GradientBoostingRegressor()),
+                    ("AdaBoost", AdaBoostRegressor()),
+                    ("Support Vector Machine", SVR()),
+                    ("K Neighbors", KNeighborsRegressor()),
+                    ("MLP", MLPRegressor()),
+                    ("Gaussian Process", GaussianProcessRegressor()),
+                    ("Kernel Ridge", KernelRidge())
+                ]
                 if models == None:
-                    models = [
-                        ("Linear Regression", LinearRegression()),
-                        ("Ridge", Ridge()),
-                        ("Lasso", Lasso()),
-                        ("ElasticNet", ElasticNet()),
-                        ("Decision Tree", DecisionTreeRegressor()),
-                        ("Random Forest", RandomForestRegressor()),
-                        ("Gradient Boosting", GradientBoostingRegressor()),
-                        ("AdaBoost", AdaBoostRegressor()),
-                        ("Support Vector Machine", SVR()),
-                        ("K Neighbors", KNeighborsRegressor()),
-                        ("MLP", MLPRegressor()),
-                        ("Gaussian Process", GaussianProcessRegressor()),
-                        ("Kernel Ridge", KernelRidge())
-                    ]
+                    models = regressors
                 else:
-                    regressors = [
-                        ("Linear Regression", LinearRegression()),
-                        ("Ridge", Ridge()),
-                        ("Lasso", Lasso()),
-                        ("ElasticNet", ElasticNet()),
-                        ("Decision Tree", DecisionTreeRegressor()),
-                        ("Random Forest", RandomForestRegressor()),
-                        ("Gradient Boosting", GradientBoostingRegressor()),
-                        ("AdaBoost", AdaBoostRegressor()),
-                        ("Support Vector Machine", SVR()),
-                        ("K Neighbors", KNeighborsRegressor()),
-                        ("MLP", MLPRegressor()),
-                        ("Gaussian Process", GaussianProcessRegressor()),
-                        ("Kernel Ridge", KernelRidge())
-                    ]
-
                     models = [regg for regg in regressors if regg[0] in models]
         else:
             raise ValueError("task_type can be either 'classification' or 'regression'")

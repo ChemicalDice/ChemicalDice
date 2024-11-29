@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChemicalDice.fusionData &mdash; ChemicalDice 0.0.3 documentation</title>
+  <title>ChemicalDice.fusionData &mdash; ChemicalDice 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=47de8214"></script>
+        <script src="../../_static/documentation_options.js?v=8c5712d9"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -195,6 +195,7 @@
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">ParameterGrid</span>
 <span class="kn">from</span> <span class="nn">sklearn.gaussian_process.kernels</span> <span class="kn">import</span> <span class="n">RBF</span><span class="p">,</span> <span class="n">DotProduct</span><span class="p">,</span> <span class="n">Matern</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
 
 
 <div class="viewcode-block" id="fusionData">
@@ -576,11 +577,11 @@
 
 <div class="viewcode-block" id="fusionData.fuseFeatures">
 <a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.fusionData.fusionData.fuseFeatures">[docs]</a>
-    <span class="k">def</span> <span class="nf">fuseFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pca&quot;</span><span class="p">,</span><span class="s2">&quot;AER&quot;</span><span class="p">],</span><span class="n">AER_dim</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span><span class="n">save_dir</span> <span class="o">=</span> <span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fuseFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pca&quot;</span><span class="p">,</span><span class="s2">&quot;CDI&quot;</span><span class="p">],</span><span class="n">CDI_dim</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span><span class="n">save_dir</span> <span class="o">=</span> <span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        The fusion methods are as follows:</span>
-<span class="sd">           - &#39;AER&#39;: Autoencoder Reconstruction Analysis, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding  </span>
+<span class="sd">           - &#39;CDI&#39;: Chemical Dive Integrator, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding  </span>
 <span class="sd">           - &#39;pca&#39;: Principal Component Analysis, a linear dimensionality reduction technique that projects the data onto a lower-dimensional subspace that maximizes the variance.</span>
 <span class="sd">           - &#39;ica&#39;: Independent Component Analysis, a linear dimensionality reduction technique that separates the data into independent sources based on the assumption of statistical independence.</span>
 <span class="sd">           - &#39;ipca&#39;: Incremental Principal Component Analysis, a variant of PCA that allows for online updates of the components without requiring access to the entire dataset.</span>
@@ -610,8 +611,9 @@
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span><span class="s2">&quot; already exists&quot;</span><span class="p">)</span>
+        
 
-        <span class="n">methods_chemdices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;ica&#39;</span><span class="p">,</span> <span class="s1">&#39;ipca&#39;</span><span class="p">,</span> <span class="s1">&#39;cca&#39;</span><span class="p">,</span> <span class="s1">&#39;tsne&#39;</span><span class="p">,</span> <span class="s1">&#39;kpca&#39;</span><span class="p">,</span> <span class="s1">&#39;rks&#39;</span><span class="p">,</span> <span class="s1">&#39;SEM&#39;</span><span class="p">,</span> <span class="s1">&#39;autoencoder&#39;</span><span class="p">,</span> <span class="s1">&#39;tensordecompose&#39;</span><span class="p">,</span> <span class="s1">&#39;plsda&#39;</span><span class="p">,</span><span class="s2">&quot;AER&quot;</span><span class="p">]</span>   
+        <span class="n">methods_chemdices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;ica&#39;</span><span class="p">,</span> <span class="s1">&#39;ipca&#39;</span><span class="p">,</span> <span class="s1">&#39;cca&#39;</span><span class="p">,</span> <span class="s1">&#39;tsne&#39;</span><span class="p">,</span> <span class="s1">&#39;kpca&#39;</span><span class="p">,</span> <span class="s1">&#39;rks&#39;</span><span class="p">,</span> <span class="s1">&#39;SEM&#39;</span><span class="p">,</span> <span class="s1">&#39;autoencoder&#39;</span><span class="p">,</span> <span class="s1">&#39;tensordecompose&#39;</span><span class="p">,</span> <span class="s1">&#39;plsda&#39;</span><span class="p">,</span><span class="s2">&quot;CDI&quot;</span><span class="p">]</span>   
         <span class="n">valid_methods_chemdices</span> <span class="o">=</span> <span class="p">[</span><span class="n">method</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods_chemdices</span><span class="p">]</span>
         <span class="n">invalid_methods_chemdices</span> <span class="o">=</span> <span class="p">[</span><span class="n">method</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">methods_chemdices</span><span class="p">]</span>
         <span class="n">methods_chemdices_text</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">methods_chemdices</span><span class="p">)</span>
@@ -664,9 +666,9 @@
                                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">fused_df1</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span><span class="s2">&quot;fused_data_&quot;</span><span class="o">+</span><span class="n">method</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_components</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
 
-            <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AER&#39;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CDI&#39;</span><span class="p">]:</span>
                 <span class="n">scaler</span> <span class="o">=</span><span class="n">StandardScaler</span><span class="p">()</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_AER_model</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">AER_model_embt_size</span> <span class="o">!=</span> <span class="n">AER_dim</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_AER_model</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">AER_model_embt_size</span> <span class="o">!=</span> <span class="n">CDI_dim</span><span class="p">:</span>
                     <span class="n">df_list2</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataframes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mopac&quot;</span><span class="p">:</span>
@@ -681,33 +683,33 @@
                             <span class="n">df_list2</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                         <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span>  <span class="s2">&quot;grover&quot;</span><span class="p">:</span>
                             <span class="n">df_list2</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">AER_dim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">CDI_dim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
                         <span class="n">embd</span> <span class="o">=</span> <span class="mi">8192</span>
                         <span class="c1">#print(df_list2)</span>
                         <span class="n">embeddings_8192</span> <span class="o">=</span> <span class="n">AutoencoderReconstructor_training_8192</span><span class="p">(</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
                         <span class="n">fused_df_unstandardized</span> <span class="o">=</span> <span class="n">embeddings_8192</span>
                         <span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                         <span class="n">fused_df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">fused_df_unstandardized</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="mi">8192</span> <span class="ow">in</span> <span class="n">AER_dim</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="mi">8192</span> <span class="ow">in</span> <span class="n">CDI_dim</span><span class="p">:</span>
                             <span class="n">fused_df1</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span><span class="s2">&quot;fused_data_&quot;</span><span class="o">+</span><span class="n">method</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">embd</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
-                            <span class="n">AER_dim</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">8192</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">embd</span> <span class="ow">in</span> <span class="n">AER_dim</span><span class="p">:</span>
+                            <span class="n">CDI_dim</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">8192</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">embd</span> <span class="ow">in</span> <span class="n">CDI_dim</span><span class="p">:</span>
                             <span class="n">embeddings_df</span> <span class="o">=</span> <span class="n">AutoencoderReconstructor_training_other</span><span class="p">(</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">embd</span><span class="p">)</span>
                             <span class="n">fused_df_unstandardized</span> <span class="o">=</span> <span class="n">embeddings_df</span>
                             <span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                             <span class="n">fused_df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">fused_df_unstandardized</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
                             <span class="n">fused_df1</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span><span class="s2">&quot;fused_data_&quot;</span><span class="o">+</span><span class="n">method</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">embd</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
-                    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">AER_dim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-                        <span class="n">embeddings_df</span> <span class="o">=</span> <span class="n">AutoencoderReconstructor_training_single</span><span class="p">(</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="n">AER_dim</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">CDI_dim</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                        <span class="n">embeddings_df</span> <span class="o">=</span> <span class="n">AutoencoderReconstructor_training_single</span><span class="p">(</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">df_list2</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">df_list2</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="n">CDI_dim</span><span class="p">)</span>
                         <span class="n">fused_df_unstandardized</span> <span class="o">=</span> <span class="n">embeddings_df</span>
                         <span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span><span class="n">inplace</span> <span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                         <span class="n">fused_df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">fused_df_unstandardized</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">fused_df_unstandardized</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
                         <span class="n">fused_df1</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span><span class="s2">&quot;fused_data_&quot;</span><span class="o">+</span><span class="n">method</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">embd</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;AER_dim should be  int or list&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CDI_dim should be  int or list&quot;</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AER model Training&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CDI model Training&quot;</span><span class="p">)</span>
 
                     
             <span class="n">prediction_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction_label</span>
@@ -753,7 +755,7 @@
 
 <div class="viewcode-block" id="fusionData.evaluate_fusion_models_nfold">
 <a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_nfold">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_fusion_models_nfold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folds</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">fused_data_path</span><span class="o">=</span><span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span> <span class="n">models</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">evaluate_fusion_models_nfold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folds</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">fused_data_path</span><span class="o">=</span><span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span> <span class="n">models</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">save_model</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform n-fold cross-validation on fusion models and save the evaluation metrics.This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.</span>
 <span class="sd">        :param folds: The number of folds to use for KFold cross-validation.</span>
@@ -764,6 +766,8 @@
 <span class="sd">        :type fused_data_path: str</span>
 <span class="sd">        :param models: The list of model names to evaluate. If None, a default set of models will be used.</span>
 <span class="sd">        :type models: list[str], optional</span>
+<span class="sd">        :param save_model: Whether to save the trained models, defaults to True.</span>
+<span class="sd">        :type save_model: bool, optional</span>
 <span class="sd">        :raises ValueError: If the `task_type` is neither &#39;classification&#39; nor &#39;regression&#39;.</span>
 <span class="sd">        :return: None</span>
 
@@ -934,6 +938,8 @@
                         <span class="c1"># print(y_train)</span>
                         <span class="c1"># Fit the model on the train set</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+                        <span class="c1"># if save_model ==True:</span>
+                        <span class="c1">#     pickle.dump(model, open(f&quot;{folds}_fold_CV_results/Model_{name.replace(&quot; &quot;,&quot;_&quot;)}.pkl&quot;, &#39;wb&#39;))</span>
 
                         <span class="k">if</span> <span class="n">task_type</span> <span class="o">==</span> <span class="s2">&quot;classification&quot;</span><span class="p">:</span>
                             <span class="c1"># Predict the probabilities on the test set</span>
@@ -986,7 +992,7 @@
 
 <div class="viewcode-block" id="fusionData.evaluate_fusion_models_scaffold_split">
 <a class="viewcode-back" href="../../ChemicalDice.html#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_scaffold_split">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_fusion_models_scaffold_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split_type</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">fused_data_path</span><span class="o">=</span><span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span><span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">evaluate_fusion_models_scaffold_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split_type</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">fused_data_path</span><span class="o">=</span><span class="s2">&quot;ChemicalDice_fusedData&quot;</span><span class="p">,</span><span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_model</span> <span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform n-fold cross-validation on fusion models and save the evaluation metrics. This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.</span>
 <span class="sd">        </span>
@@ -998,6 +1004,8 @@
 <span class="sd">        :type fused_data_path: str</span>
 <span class="sd">        :param models: The list of model names to evaluate. If None, a default set of models will be used.</span>
 <span class="sd">        :type models: list[str], optional</span>
+<span class="sd">        :param save_model: Whether to save the trained models, defaults to True.</span>
+<span class="sd">        :type save_model: bool, optional</span>
 <span class="sd">        :raises ValueError: If the `task_type` is neither &#39;classification&#39; nor &#39;regression&#39;.</span>
 <span class="sd">        :return: None</span>
 
@@ -1346,7 +1354,16 @@
                 <span class="c1">#print(best_parameter)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">best_parameter</span><span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
+                
+                <span class="c1"># if save_model ==True:</span>
+                <span class="c1">#     pickle.dump(model, open(&quot;scaffold_split_results/Model_&quot;+name.replace(&quot; &quot;,&quot;_&quot;)+&quot;.pkl&quot;, &#39;wb&#39;))</span>
+                
+                <span class="c1"># some time later...</span>
+                
+                <span class="c1"># # load the model from disk</span>
+                <span class="c1"># loaded_model = pickle.load(open(filename, &#39;rb&#39;))</span>
+                <span class="c1"># result = loaded_model.score(X_test, Y_test)</span>
+                <span class="c1"># print(result)</span>
 
                 <span class="k">if</span> <span class="n">task_type</span> <span class="o">==</span> <span class="s2">&quot;regression&quot;</span><span class="p">:</span>
 

@@ -126,7 +126,7 @@ def AutoencoderReconstructor_training_8192(X1, X2, X3 ,X4 ,X5 , X6):
     latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
     # print('k=', embed_dim)
 
-    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
+    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum,k=[10,7,12,5,10,6]).to(device)
 
     net_cdi, loss_train, loss_val, _, _ ,embeddings_df= trainAE_8192(net_cdi, "AER_8192", embed_dim, data_loader, data_loader, 500, True)
 

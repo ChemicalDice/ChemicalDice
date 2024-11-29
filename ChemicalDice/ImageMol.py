@@ -257,8 +257,8 @@ def image_to_embeddings(input_file, output_file_name):
     if resume:
         if os.path.isfile(resume):  # only support ResNet18 when loading resume
             #print("=> loading checkpoint '{}'".format(resume))
-            if torch.cuda.is_available():
-              checkpoint = torch.load(resume)
+            if False:
+              checkpoint = merged_df = merged_df[merged_df['Task'].isin(task_completed)]
             else:
               checkpoint = torch.load(resume, map_location=torch.device('cpu'))
             ckp_keys = list(checkpoint['state_dict'])

@@ -113,6 +113,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import ParameterGrid
 from sklearn.gaussian_process.kernels import RBF, DotProduct, Matern
+import pickle
 
 
 class fusionData:
@@ -463,11 +464,11 @@ class fusionData:
 
 
 
-    def fuseFeatures(self, n_components, methods=["pca","AER"],AER_dim=4096,save_dir = "ChemicalDice_fusedData",**kwargs):
+    def fuseFeatures(self, n_components, methods=["pca","CDI"],CDI_dim=4096,save_dir = "ChemicalDice_fusedData",**kwargs):
         """
 
         The fusion methods are as follows:
-           - 'AER': Autoencoder Reconstruction Analysis, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding  
+           - 'CDI': Chemical Dive Integrator, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding  
            - 'pca': Principal Component Analysis, a linear dimensionality reduction technique that projects the data onto a lower-dimensional subspace that maximizes the variance.
            - 'ica': Independent Component Analysis, a linear dimensionality reduction technique that separates the data into independent sources based on the assumption of statistical independence.
            - 'ipca': Incremental Principal Component Analysis, a variant of PCA that allows for online updates of the components without requiring access to the entire dataset.
@@ -497,8 +498,9 @@ class fusionData:
             os.mkdir(save_dir)
         except:
             print(save_dir," already exists")
+        
 
-        methods_chemdices = ['pca', 'ica', 'ipca', 'cca', 'tsne', 'kpca', 'rks', 'SEM', 'autoencoder', 'tensordecompose', 'plsda',"AER"]   
+        methods_chemdices = ['pca', 'ica', 'ipca', 'cca', 'tsne', 'kpca', 'rks', 'SEM', 'autoencoder', 'tensordecompose', 'plsda',"CDI"]   
         valid_methods_chemdices = [method for method in methods if method in methods_chemdices]
         invalid_methods_chemdices = [method for method in methods if method not in methods_chemdices]
         methods_chemdices_text = ",".join(methods_chemdices)
@@ -551,9 +553,9 @@ class fusionData:
                                                     **kwargs)
                 fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(n_components)+".csv"))
 
-            elif method in ['AER']:
+            elif method in ['CDI']:
                 scaler =StandardScaler()
-                if self.training_AER_model is None or self.AER_model_embt_size != AER_dim:
+                if self.training_AER_model is None or self.AER_model_embt_size != CDI_dim:
                     df_list2=[None,None,None,None,None,None]
                     for name, df in self.dataframes.items():
                         if name.lower() == "mopac":
@@ -568,33 +570,33 @@ class fusionData:
                             df_list2[4] = df.copy()
                         elif name.lower() ==  "grover":
                             df_list2[5] = df.copy()
-                    if type(AER_dim) == list:
+                    if type(CDI_dim) == list:
                         embd = 8192
                         #print(df_list2)
                         embeddings_8192 = AutoencoderReconstructor_training_8192(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5])
                         fused_df_unstandardized = embeddings_8192
                         fused_df_unstandardized.set_index("id",inplace =True)
                         fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
-                        if 8192 in AER_dim:
+                        if 8192 in CDI_dim:
                             fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
-                            AER_dim.remove(8192)
-                        for embd in AER_dim:
+                            CDI_dim.remove(8192)
+                        for embd in CDI_dim:
                             embeddings_df = AutoencoderReconstructor_training_other(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5], embd)
                             fused_df_unstandardized = embeddings_df
                             fused_df_unstandardized.set_index("id",inplace =True)
                             fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
                             fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
-                    elif type(AER_dim) == int:
-                        embeddings_df = AutoencoderReconstructor_training_single(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5],AER_dim)
+                    elif type(CDI_dim) == int:
+                        embeddings_df = AutoencoderReconstructor_training_single(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5],CDI_dim)
                         fused_df_unstandardized = embeddings_df
                         fused_df_unstandardized.set_index("id",inplace =True)
                         fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
                         fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
                     else:
-                        raise ValueError("AER_dim should be  int or list")
+                        raise ValueError("CDI_dim should be  int or list")
 
                 else:
-                    print("AER model Training")
+                    print("CDI model Training")
 
                     
             prediction_label = self.prediction_label
@@ -637,7 +639,7 @@ class fusionData:
             print("Data is fused and saved to  ChemicalDice_fusedData")
 
 
-    def evaluate_fusion_models_nfold(self, folds, task_type, fused_data_path="ChemicalDice_fusedData", models = None):
+    def evaluate_fusion_models_nfold(self, folds, task_type, fused_data_path="ChemicalDice_fusedData", models = None,save_model = True):
         """
         Perform n-fold cross-validation on fusion models and save the evaluation metrics.This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.
         :param folds: The number of folds to use for KFold cross-validation.
@@ -648,6 +650,8 @@ class fusionData:
         :type fused_data_path: str
         :param models: The list of model names to evaluate. If None, a default set of models will be used.
         :type models: list[str], optional
+        :param save_model: Whether to save the trained models, defaults to True.
+        :type save_model: bool, optional
         :raises ValueError: If the `task_type` is neither 'classification' nor 'regression'.
         :return: None
 
@@ -818,6 +822,8 @@ class fusionData:
                         # print(y_train)
                         # Fit the model on the train set
                         model.fit(X_train, y_train)
+                        # if save_model ==True:
+                        #     pickle.dump(model, open(f"{folds}_fold_CV_results/Model_{name.replace(" ","_")}.pkl", 'wb'))
 
                         if task_type == "classification":
                             # Predict the probabilities on the test set
@@ -867,7 +873,7 @@ class fusionData:
 
     
 
-    def evaluate_fusion_models_scaffold_split(self, split_type, task_type, fused_data_path="ChemicalDice_fusedData",models=None):
+    def evaluate_fusion_models_scaffold_split(self, split_type, task_type, fused_data_path="ChemicalDice_fusedData",models=None,save_model =True):
         """
         Perform n-fold cross-validation on fusion models and save the evaluation metrics. This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.
         
@@ -879,6 +885,8 @@ class fusionData:
         :type fused_data_path: str
         :param models: The list of model names to evaluate. If None, a default set of models will be used.
         :type models: list[str], optional
+        :param save_model: Whether to save the trained models, defaults to True.
+        :type save_model: bool, optional
         :raises ValueError: If the `task_type` is neither 'classification' nor 'regression'.
         :return: None
 
@@ -1227,7 +1235,16 @@ class fusionData:
                 #print(best_parameter)
                 model.set_params(**best_parameter)
                 model.fit(X_train, y_train)
-
+                
+                # if save_model ==True:
+                #     pickle.dump(model, open("scaffold_split_results/Model_"+name.replace(" ","_")+".pkl", 'wb'))
+                
+                # some time later...
+                
+                # # load the model from disk
+                # loaded_model = pickle.load(open(filename, 'rb'))
+                # result = loaded_model.score(X_test, Y_test)
+                # print(result)
 
                 if task_type == "regression":
 

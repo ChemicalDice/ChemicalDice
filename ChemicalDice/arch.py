@@ -60,7 +60,7 @@ class ChemicalDiceIntegrator(nn.Module):
                 res += lst[i]
         return res
     
-    def getAEDimensions(self, inp_dim, latent_space_dim, k=7):
+    def getAEDimensions(self, inp_dim, latent_space_dim, k=3):
         ae_dim = []
         this_dim = inp_dim
         while this_dim > latent_space_dim:
@@ -95,16 +95,11 @@ class ChemicalDiceIntegrator(nn.Module):
         #     print(self.getAEDimensions(self.getSum(self.latent_space_dims, i), self.latent_space_dims[i]))
         # [20006, 19834, 18796, 17018, 10218, 15218]
 
-        # if k==[]:
-        #     k=[10]*len(embd_sizes)
+        if k==[]:
+            k=[3]*len(embd_sizes)
             
         for i in range(len(embd_sizes)):
-            if k==[]:
-                dim = self.getAEDimensions(embd_sizes_sum[i], embd_sizes[i])
-            else:
-                dim = self.getAEDimensions(embd_sizes_sum[i], embd_sizes[i], k[i])
-            print(i,dim)
-            self.encoders[f'{i}'] = Autoencoder(dim)
+            self.encoders[f'{i}'] = Autoencoder(self.getAEDimensions(embd_sizes_sum[i], embd_sizes[i], k[i]))
 
         # self.encoders[f'{0}'] = Autoencoder([embd_sizes_sum[0], 2223, 741, embd_sizes[0], 741, 2223, embd_sizes_sum[0]])
         # self.encoders[f'{1}'] = Autoencoder([embd_sizes_sum[1], 2204, embd_sizes[1], 2204, embd_sizes_sum[1]])

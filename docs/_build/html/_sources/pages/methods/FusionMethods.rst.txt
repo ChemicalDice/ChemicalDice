@@ -54,42 +54,48 @@ Linear methods
 Non linear methods
 ------------------
 
-1. **AER (Autoencoder Reconstruction):** The AER method is a neural
-   network-based technique that generates embeddings by minimizing
-   information loss during the cross reconstruction of descriptors,
-   thereby providing a comprehensive and accurate representation of data
-   in a lower-dimensional space.
-2. **t-SNE (t-distributed Stochastic Neighbor Embedding)**: t-SNE is a
+1. **t-SNE (t-distributed Stochastic Neighbor Embedding)**: t-SNE is a
    non-linear dimensionality reduction technique that preserves the
    local structure of the data by embedding it in a lower-dimensional
    space with a probability distribution that matches the pairwise
    distances in the original space.
-3. **KPCA (Kernel Principal Component Analysis)**: KPCA is a non-linear
+2. **KPCA (Kernel Principal Component Analysis)**: KPCA is a non-linear
    extension of PCA that uses a kernel function to map the data into a
    higher-dimensional feature space where it is linearly separable. This
    allows KPCA to capture complex, non-linear relationships in the data.
-4. **RKS (Random Kitchen Sinks)**: RKS is a non-linear dimensionality
+3. **RKS (Random Kitchen Sinks)**: RKS is a non-linear dimensionality
    reduction technique that uses random projections to approximate a
    kernel function and map the data into a lower-dimensional feature
    space. It is often used in machine learning to speed up kernel
    methods.
-5. **SEM (SpectralEmbedding )**: Spectral Embedding is a dimensionality
+4. **SEM (SpectralEmbedding )**: Spectral Embedding is a dimensionality
    reduction technique that uses the eigenvalues of a graph Laplacian to
    map data into a lower-dimensional space. It preserves the local and
    global structure of the data by capturing its intrinsic geometry.
    This method is particularly effective for non-linear dimensionality
    reduction and manifold learning.
-6. **Isomap (Isometric Mapping)**: Isomap is a non-linear dimensionality
+5. **Isomap (Isometric Mapping)**: Isomap is a non-linear dimensionality
    reduction technique that preserves the global structure of the data
    by embedding it in a lower-dimensional space with a geodesic distance
    that approximates the shortest path between points in the original
    space.
-7. **LLE (Locally Linear Embedding)**: LLE is a non-linear
+6. **LLE (Locally Linear Embedding)**: LLE is a non-linear
    dimensionality reduction technique that preserves the local structure
    of the data by reconstructing each point as a linear combination of
    its neighbors and embedding it in a lower-dimensional space that
    minimizes the reconstruction error.
-8. **Tensor Decomposition**: Tensor Decomposition is a technique that
+
+
+Deep Learning based methods
+---------------------------
+
+1. **CDI (Chemical Dice Integrator):** The CDI method is a neural
+   network-based technique that generates embeddings by minimizing
+   information loss during the cross reconstruction of descriptors,
+   thereby providing a comprehensive and accurate representation of data
+   in a lower-dimensional space.
+
+2. **Tensor Decomposition**: Tensor Decomposition is a technique that
    decomposes a multi-dimensional array (tensor) into a set of
    lower-dimensional arrays (factors) that capture the latent structure
    and interactions of the data. It is often used in machine learning to

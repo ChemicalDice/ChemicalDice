@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChemicalDice package &mdash; ChemicalDice 0.0.3 documentation</title>
+  <title>ChemicalDice package &mdash; ChemicalDice 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47de8214"></script>
+        <script src="_static/documentation_options.js?v=8c5712d9"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -340,10 +340,10 @@ Defaults to “labels”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ChemicalDice.fusionData.fusionData.fuseFeatures">
-<span class="sig-name descname"><span class="pre">fuseFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['pca',</span> <span class="pre">'AER']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AER_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.fuseFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.fuseFeatures" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fuseFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['pca',</span> <span class="pre">'CDI']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CDI_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.fuseFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.fuseFeatures" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>The fusion methods are as follows:</dt><dd><ul class="simple">
-<li><p>‘AER’: Autoencoder Reconstruction Analysis, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding</p></li>
+<li><p>‘CDI’: Chemical Dive Integrator, a autoencoder based feature fusion technique that cross reconstruct data from different modalities and make autoencoders to learn importent features from the data.  Finally the data is converted from its orignal dimention to reduced size of embedding</p></li>
 <li><p>‘pca’: Principal Component Analysis, a linear dimensionality reduction technique that projects the data onto a lower-dimensional subspace that maximizes the variance.</p></li>
 <li><p>‘ica’: Independent Component Analysis, a linear dimensionality reduction technique that separates the data into independent sources based on the assumption of statistical independence.</p></li>
 <li><p>‘ipca’: Incremental Principal Component Analysis, a variant of PCA that allows for online updates of the components without requiring access to the entire dataset.</p></li>
@@ -376,7 +376,7 @@ Defaults to “labels”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ChemicalDice.fusionData.fusionData.evaluate_fusion_models_nfold">
-<span class="sig-name descname"><span class="pre">evaluate_fusion_models_nfold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused_data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.evaluate_fusion_models_nfold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_nfold" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">evaluate_fusion_models_nfold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused_data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.evaluate_fusion_models_nfold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_nfold" title="Link to this definition"></a></dt>
 <dd><p>Perform n-fold cross-validation on fusion models and save the evaluation metrics.This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.
 :param folds: The number of folds to use for KFold cross-validation.
 :type folds: int
@@ -386,6 +386,8 @@ Defaults to “labels”.</p></li>
 :type fused_data_path: str
 :param models: The list of model names to evaluate. If None, a default set of models will be used.
 :type models: list[str], optional
+:param save_model: Whether to save the trained models, defaults to True.
+:type save_model: bool, optional
 :raises ValueError: If the <cite>task_type</cite> is neither ‘classification’ nor ‘regression’.
 :return: None</p>
 <dl class="simple">
@@ -428,7 +430,7 @@ Defaults to “labels”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ChemicalDice.fusionData.fusionData.evaluate_fusion_models_scaffold_split">
-<span class="sig-name descname"><span class="pre">evaluate_fusion_models_scaffold_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused_data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.evaluate_fusion_models_scaffold_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_scaffold_split" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">evaluate_fusion_models_scaffold_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused_data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ChemicalDice_fusedData'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ChemicalDice/fusionData.html#fusionData.evaluate_fusion_models_scaffold_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ChemicalDice.fusionData.fusionData.evaluate_fusion_models_scaffold_split" title="Link to this definition"></a></dt>
 <dd><p>Perform n-fold cross-validation on fusion models and save the evaluation metrics. This method evaluates the performance of various machine learning models on fused data obtained from ChemDice. It supports both classification and regression tasks and saves the performance metrics for each fold into a CSV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -437,6 +439,7 @@ Defaults to “labels”.</p></li>
 <li><p><strong>task_type</strong> (<em>str</em>) – The type of task to perform, either ‘classification’ or ‘regression’.</p></li>
 <li><p><strong>fused_data_path</strong> (<em>str</em>) – The path to the directory containing the fused data files, defaults to ‘ChemicalDice_fusedData’.</p></li>
 <li><p><strong>models</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The list of model names to evaluate. If None, a default set of models will be used.</p></li>
+<li><p><strong>save_model</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to save the trained models, defaults to True.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>

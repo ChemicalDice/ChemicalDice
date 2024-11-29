@@ -5,8 +5,8 @@ ChemicalDice presents an innovative paradigm shift in cheminformatics
 and bioinformatics, leveraging advanced feature fusion methodologies to
 transcend traditional data silos. By ingeniously amalgamating disparate
 data modalities from chemical descriptors. Through a rich arsenal of
-techniques including Autoencoder Reconstruction, PCA, ICA, IPCA, CCA,
-t-SNE, KPCA, RKS, SEM, Autoencoders, Tensor Decomposition, and PLSDA.
+techniques including  Chemical Dice Integrator, PCA, ICA, IPCA, CCA,
+t-SNE, KPCA, RKS, SEM, Tensor Decomposition, and PLSDA.
 ChemicalDice unlocks novel insights by unraveling the intricate
 interplay between chemical and biological entities within complex
 datasets. Its intuitive interface and comprehensive toolkit empower
@@ -66,7 +66,7 @@ using the following commands:
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.4
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.8
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==1.2.0 tensorly==0.8.1 transformers==4.40.1
    pip install --upgrade tensorflow==2.15
@@ -115,7 +115,7 @@ Install packages
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.4
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.8
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==1.2.0 tensorly==0.8.1 transformers==4.40.1
    pip install --upgrade tensorflow==2.15
@@ -281,11 +281,11 @@ or ‘max’
 Data fusion will take all the data that is normalized in previous step
 and make a single fused data. The ``fuseFeatures`` method can be used to
 fuse the data and save it in a csv file. The fusion methods to use given
-by methods argument. Methods available for fusing data are ‘AER’, ‘pca’,
+by methods argument. Methods available for fusing data are ‘CDI’, ‘pca’,
 ‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’ and ‘tensordecompose’.
 The number of components to keep from different data in fusion can be
 provided by ``n_components``\ aggumrent. Reduced dimensions to use for
-Autoencoder Reconstruction can be provided by ``AER_dim`` argument.
+Chemical Dice Integrator can be provided by ``CDI_dim`` argument.
 Argument ``save_dir`` can be used to specify directory for saving the
 fused data.
 
@@ -293,8 +293,8 @@ fused data.
 
    # fusing features in different data
    fusiondata.fuseFeatures(n_components=10,
-                     methods= ['pca','tensordecompose','plsda','AER'],
-                     AER_dim= [4096,8192],
+                     methods= ['pca','tensordecompose','plsda','CDI'],
+                     CDI_dim= [4096,8192],
                      save_dir = "ChemicalDice_fusedData")
 
 **Evaluation of Fusion Methods**

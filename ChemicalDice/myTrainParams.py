@@ -3,7 +3,7 @@ from ChemicalDice.myImports import *
 seed_value = 42
 rs = RandomState(MT19937(SeedSequence(seed_value))) 
 np.random.seed(seed_value)
-batch_size = 64
+batch_size = 32
 
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False

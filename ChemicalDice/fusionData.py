@@ -102,7 +102,7 @@ import os
 import matplotlib.pyplot as plt
 from scipy import stats
 import pandas as pd
-from ChemicalDice.getEmbeddings import AutoencoderReconstructor_training_other , AutoencoderReconstructor_testing, AutoencoderReconstructor_training_8192, AutoencoderReconstructor_training_single
+from ChemicalDice.getEmbeddings import AutoencoderReconstructor_training_other , AutoencoderReconstructor_training_8192, AutoencoderReconstructor_training_single
 import time
 from ChemicalDice.splitting import random_scaffold_split_train_val_test, scaffold_split_balanced_train_val_test, scaffold_split_train_val_test
 
@@ -464,7 +464,7 @@ class fusionData:
 
 
 
-    def fuseFeatures(self, n_components, methods=["pca","CDI"],CDI_dim=4096,save_dir = "ChemicalDice_fusedData",**kwargs):
+    def fuseFeatures(self, n_components, methods=["pca","CDI"],CDI_dim=8192,CDI_epochs=500,  CDI_k =[10,7,12,5,10,6],save_dir = "ChemicalDice_fusedData",**kwargs):
         """
 
         The fusion methods are as follows:
@@ -488,6 +488,14 @@ class fusionData:
         :type n_components: int
         :param method: The method to use for the fusion. It can be one of these: 'pca', 'ica', 'ipca', 'cca', 'tsne', 'kpca', 'rks', 'SEM', 'isomap', 'lle', 'autoencoder', 'plsda', or 'tensordecompose'.
         :type methods: list
+        :param CDI_dim: The output dimension for the 'CDI' method. This determines the size of the final embedding.
+        :type CDI_dim: int
+        :param CDI_epochs: The number of epochs for training the autoencoder in the 'CDI' method.
+        :type CDI_epochs: int
+        :param CDI_k: A list representing the reduction in the number of nodes from the input layer to the subsequent layers, for six input feature matrix in the 'CDI' method.
+        :type CDI_k: list
+        :param save_dir: The directory where the fused data will be saved.
+        :type save_dir: str
         :param kwargs: Additional arguments for specific fusion methods.
         :type kwargs: dict
 
@@ -573,7 +581,7 @@ class fusionData:
                     if type(CDI_dim) == list:
                         embd = 8192
                         #print(df_list2)
-                        embeddings_8192 = AutoencoderReconstructor_training_8192(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5])
+                        embeddings_8192 = AutoencoderReconstructor_training_8192(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5],CDI_epochs,CDI_k)
                         fused_df_unstandardized = embeddings_8192
                         fused_df_unstandardized.set_index("id",inplace =True)
                         fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
@@ -581,13 +589,14 @@ class fusionData:
                             fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
                             CDI_dim.remove(8192)
                         for embd in CDI_dim:
-                            embeddings_df = AutoencoderReconstructor_training_other(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5], embd)
+                            embeddings_df = AutoencoderReconstructor_training_other(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5], embd,CDI_epochs,CDI_k)
                             fused_df_unstandardized = embeddings_df
                             fused_df_unstandardized.set_index("id",inplace =True)
                             fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)
                             fused_df1.to_csv(os.path.join(save_dir,"fused_data_"+method+"_"+str(embd)+".csv"))
                     elif type(CDI_dim) == int:
-                        embeddings_df = AutoencoderReconstructor_training_single(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5],CDI_dim)
+                        embd=CDI_dim
+                        embeddings_df,model_wt = AutoencoderReconstructor_training_single(df_list2[0], df_list2[1], df_list2[2], df_list2[3],df_list2[4],df_list2[5],CDI_dim,CDI_epochs,CDI_k)
                         fused_df_unstandardized = embeddings_df
                         fused_df_unstandardized.set_index("id",inplace =True)
                         fused_df1 = pd.DataFrame(scaler.fit_transform(fused_df_unstandardized), index=fused_df_unstandardized.index, columns=fused_df_unstandardized.columns)

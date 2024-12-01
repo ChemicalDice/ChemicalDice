@@ -61,7 +61,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 
-def AutoencoderReconstructor_training_8192(X1, X2, X3 ,X4 ,X5 , X6):
+def AutoencoderReconstructor_training_8192(X1, X2, X3 ,X4 ,X5 , X6,CDI_epochs,CDI_k):
     
     scaler =StandardScaler()
     
@@ -126,12 +126,13 @@ def AutoencoderReconstructor_training_8192(X1, X2, X3 ,X4 ,X5 , X6):
     latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
     # print('k=', embed_dim)
 
-    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum,k=[10,7,12,5,10,6]).to(device)
+    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum,k=CDI_k).to(device)
 
-    net_cdi, loss_train, loss_val, _, _ ,embeddings_df= trainAE_8192(net_cdi, "AER_8192", embed_dim, data_loader, data_loader, 500, True)
+    net_cdi, loss_train, loss_val, _, _ ,embeddings_df= trainAE_8192(net_cdi, "AER_8192", embed_dim, data_loader, data_loader, CDI_epochs, True)
 
     #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
     #net_cdi.load_state_dict(torch.load(f"AER_8192_cdi.pt"))
+    
 
     # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
     #   if not os.path.exists(file_path):
@@ -154,7 +155,7 @@ def AutoencoderReconstructor_training_8192(X1, X2, X3 ,X4 ,X5 , X6):
     return embeddings_df#, model_wt
 
 
-def AutoencoderReconstructor_training_other(X1, X2, X3 ,X4 ,X5 , X6, embedding_sizes):
+def AutoencoderReconstructor_training_other(X1, X2, X3 ,X4 ,X5 , X6, embedding_sizes,CDI_epochs,CDI_k):
     scaler =StandardScaler()
     
     ids = X1.index.to_numpy()
@@ -213,14 +214,14 @@ def AutoencoderReconstructor_training_other(X1, X2, X3 ,X4 ,X5 , X6, embedding_s
     embed_dim = embedding_sizes
     latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
     #print('k=', embed_dim)
-    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=8192, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
+    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=8192, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum,k=CDI_k).to(device)
     #net_cdi, loss_train, loss_val, _, _,model_state = trainAE(net_cdi, "test", embed_dim, data_loader, data_loader, 5, True)
     net_cdi.load_state_dict(torch.load("AER_8192_cdi.pt"))
 
     #net_cdi.load_state_dict(model_state)
     # finetune_cdi, loss_train, loss_val, _, _ = finetune_AE(finetune_cdi, dataset_name, user_embed_size, choice, data_loader, data_loader, 2, True)
     finetune_cdi = FineTuneChemicalDiceIntegrator(net_cdi, user_embed_dim=embed_dim, default_embed_dim=8192).to(device)
-    finetune_cdi, loss_train, loss_val, _, _ = finetune_AE(finetune_cdi, user_embed_dim=embed_dim, choice=1, train_loader=data_loader, epochs=500, verbose=True)
+    finetune_cdi, loss_train, loss_val, _, _ = finetune_AE(finetune_cdi, user_embed_dim=embed_dim, choice=1, train_loader=data_loader, epochs=CDI_epochs, verbose=True)
 
 
     embeddings = None
@@ -257,7 +258,7 @@ def AutoencoderReconstructor_training_other(X1, X2, X3 ,X4 ,X5 , X6, embedding_s
 
 
 
-def AutoencoderReconstructor_training_single(X1, X2, X3 ,X4 ,X5 , X6,embed_dim):
+def AutoencoderReconstructor_training_single(X1, X2, X3 ,X4 ,X5 , X6,embed_dim,CDI_epochs,CDI_k):
     
     scaler =StandardScaler()
     
@@ -318,17 +319,16 @@ def AutoencoderReconstructor_training_single(X1, X2, X3 ,X4 ,X5 , X6,embed_dim):
 
 
 
-
     latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
     # print('k=', embed_dim)
 
-    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
+    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum,k=CDI_k).to(device)
 
-    net_cdi, loss_train, loss_val, _, _ , model_wt= trainAE_8192(net_cdi, "AER_"+str(embed_dim), embed_dim, data_loader, data_loader, 500, True)
-    print(0)
+    net_cdi, loss_train, loss_val, _, _ , model_wt= trainAE_8192(net_cdi, "AER_"+str(embed_dim), embed_dim, data_loader, data_loader, CDI_epochs, True)
+    # print(0)
     #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
     net_cdi.load_state_dict(torch.load("AER_"+str(embed_dim)+"_cdi.pt"))
-    print(1)
+    # print(1)
 
     embeddings = None
     net_cdi.eval()
@@ -363,423 +363,12 @@ def AutoencoderReconstructor_training_single(X1, X2, X3 ,X4 ,X5 , X6,embed_dim):
     #print(ids.shape)
     embeddings_df = pd.DataFrame(embeddings)
     embeddings_df['id'] = ids
-    embeddings_df
+    # print(embeddings_df)
     return embeddings_df, model_wt
 
 
 
-def AutoencoderReconstructor_training_new2(X1, X2, X3 ,X4 ,X5 , X6, embedding_sizes):
-    
-    scaler =StandardScaler()
-    
-    ids = X1.index.to_numpy()
 
-    embd_sizes =[X1.shape[1],X2.shape[1],X3.shape[1],X4.shape[1],X5.shape[1],X6.shape[1]]
-
-    def sum_except_self(nums):
-        total_sum = sum(nums)
-        return [total_sum - num for num in nums]
-
-    embd_sizes_sum = sum_except_self(embd_sizes)
-
-    # print(embd_sizes_sum)
-    # print(embd_sizes)
-
-    
-    # X1 = scaler.fit_transform(X1)
-    # X2 = scaler.fit_transform(X2)
-    # X3 = scaler.fit_transform(X3)
-    # X4 = scaler.fit_transform(X4)
-    # X5 = scaler.fit_transform(X5)
-    # X6 = scaler.fit_transform(X6)
-
-    X1 = X1.values
-    X2 = X2.values
-    X3 = X3.values
-    X4 = X4.values
-    X5 = X5.values
-    X6 = X6.values
-
-    
-    _, X1_dim = X1.shape
-    _, X2_dim = X2.shape
-    _, X3_dim = X3.shape
-    _, X4_dim = X4.shape
-    _, X5_dim = X5.shape
-    _, X6_dim = X6.shape
-
-    # print(X1.shape)
-    # print(X2.shape)
-    # print(X3.shape)
-    # print(X4.shape)
-    # print(X5.shape)
-    # print(X6.shape)
-
-    
-
-    # print(X1.shape[0])
-
-
-    data = MyDataset(np.array(X1), np.array(X2), np.array(X3), np.array(X4), np.array(X5), np.array(X6), np.array([-1] * X1.shape[0]))
-    data_loader = DataLoader(data, batch_size = batch_size, shuffle=False, worker_init_fn=worker_init_fn) 
-    
-    train_loss_values = []
-    val_loss_values = []
-    loss_lst = []
-
-
-
-    embed_dim = 8192
-    latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
-    # print('k=', embed_dim)
-
-    net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
-
-    net_cdi, loss_train, loss_val, _, _ = trainAE(net_cdi, "AER_8192", embed_dim, data_loader, data_loader, 500, True)
-
-    #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
-    net_cdi.load_state_dict(torch.load(f"AER_8192_cdi.pt"))
-
-
-    embeddings = None
-    net_cdi.eval()
-    for data in data_loader:
-        k1, k2, k3, k4, k5, k6, _ = data
-        k1, k2, k3, k4, k5, k6 = k1.to(device), k2.to(device), k3.to(device), k4.to(device), k5.to(device), k6.to(device)
-        _, _, _, _, _, _, _, _, _, _, _, _, output, _ = net_cdi.forward([k1, k2, k3, k4, k5, k6])
-        # print(output.shape)
-
-        if embeddings is None:
-            embeddings = output.cpu().detach().numpy()
-        else:
-            embeddings = np.append(embeddings, output.cpu().detach().numpy(), axis = 0)
-
-    # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
-    #   if not os.path.exists(file_path):
-    #       os.makedirs(file_path) 
-    #   with open(file_path + file_name, mode='w', newline='') as file:
-    #       writer = csv.writer(file) 
-    #       for row in range(ids.shape[0]):
-    #           writer.writerow(np.concatenate(([ids[row]], embeddings[row])))
-    #print(ids.shape, embeddings.shape)
-    #writeEmbeddingsIntoFile('../embeddings/', f'{dataset_name}_embed_{embed_dim}.csv', ids, embeddings)
-    # model = torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt")
-    # encoder_1_weights = model['encoders.6.encoder.0.weight']
-    # row_means = torch.mean(encoder_1_weights, dim=0)
-    # Convert the tensor into a NumPy array
-    #row_means_np = row_means.cpu().numpy()
-    #print(ids.shape)
-    embeddings_df = pd.DataFrame(embeddings)
-    embeddings_df['id'] = ids
-    embeddings_df
-    return embeddings_df, "AER_8192_cdi.pt"
-
-
-
-def AutoencoderReconstructor_training(X1, X2, X3 ,X4 ,X5 , X6, embedding_sizes):
-    
-    scaler =StandardScaler()
-    
-    ids = X1.index.to_numpy()
-
-    embd_sizes =[X1.shape[1],X2.shape[1],X3.shape[1],X4.shape[1],X5.shape[1],X6.shape[1]]
-
-    def sum_except_self(nums):
-        total_sum = sum(nums)
-        return [total_sum - num for num in nums]
-
-    embd_sizes_sum = sum_except_self(embd_sizes)
-
-    # print(embd_sizes_sum)
-    # print(embd_sizes)
-
-    
-    # X1 = scaler.fit_transform(X1)
-    # X2 = scaler.fit_transform(X2)
-    # X3 = scaler.fit_transform(X3)
-    # X4 = scaler.fit_transform(X4)
-    # X5 = scaler.fit_transform(X5)
-    # X6 = scaler.fit_transform(X6)
-
-    X1 = X1.values
-    X2 = X2.values
-    X3 = X3.values
-    X4 = X4.values
-    X5 = X5.values
-    X6 = X6.values
-
-    
-    _, X1_dim = X1.shape
-    _, X2_dim = X2.shape
-    _, X3_dim = X3.shape
-    _, X4_dim = X4.shape
-    _, X5_dim = X5.shape
-    _, X6_dim = X6.shape
-
-    # print(X1.shape)
-    # print(X2.shape)
-    # print(X3.shape)
-    # print(X4.shape)
-    # print(X5.shape)
-    # print(X6.shape)
-
-    
-
-    # print(X1.shape[0])
-
-
-    data = MyDataset(np.array(X1), np.array(X2), np.array(X3), np.array(X4), np.array(X5), np.array(X6), np.array([-1] * X1.shape[0]))
-    data_loader = DataLoader(data, batch_size = batch_size, shuffle=False, worker_init_fn=worker_init_fn) 
-    
-    train_loss_values = []
-    val_loss_values = []
-    loss_lst = []
-
-    if type(embedding_sizes) == list:
-        
-        #try_k_embeddings = embedding_sizes
-
-        all_embeddings = []
-
-        embed_dim = 8192
-        latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
-        # print('k=', embed_dim)
-        net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
-        net_cdi, loss_train, loss_val, _, _ = trainAE(net_cdi, "AER_8192", embed_dim, data_loader, data_loader, 500, True)
-        #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
-        net_cdi.load_state_dict(torch.load(f"AER_8192_cdi.pt"))
-
-        
-
-
-        embeddings = None
-        net_cdi.eval()
-        for data in data_loader:
-            k1, k2, k3, k4, k5, k6, _ = data
-            k1, k2, k3, k4, k5, k6 = k1.to(device), k2.to(device), k3.to(device), k4.to(device), k5.to(device), k6.to(device)
-            _, _, _, _, _, _, _, _, _, _, _, _, output, _ = net_cdi.forward([k1, k2, k3, k4, k5, k6])
-            # print(output.shape)
-            
-            if embeddings is None:
-                embeddings = output.cpu().detach().numpy()
-            else:
-                embeddings = np.append(embeddings, output.cpu().detach().numpy(), axis = 0)
-
-        # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
-        #   if not os.path.exists(file_path):
-        #       os.makedirs(file_path) 
-        #   with open(file_path + file_name, mode='w', newline='') as file:
-        #       writer = csv.writer(file) 
-        #       for row in range(ids.shape[0]):
-        #           writer.writerow(np.concatenate(([ids[row]], embeddings[row])))
-        #print(ids.shape, embeddings.shape)
-        #writeEmbeddingsIntoFile('../embeddings/', f'{dataset_name}_embed_{embed_dim}.csv', ids, embeddings)
-        # model = torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt")
-        # encoder_1_weights = model['encoders.6.encoder.0.weight']
-        # row_means = torch.mean(encoder_1_weights, dim=0)
-        # Convert the tensor into a NumPy array
-        #row_means_np = row_means.cpu().numpy()
-        #print(ids.shape)
-        embeddings_df = pd.DataFrame(embeddings)
-        embeddings_df['id'] = ids
-        all_embeddings.append(embeddings_df)
-    else:
-        try_k_embeddings = embedding_sizes
-
-        all_embeddings = []
-
-        embed_dim = try_k_embeddings
-        latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
-        # print('k=', embed_dim)
-        net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
-        net_cdi, loss_train, loss_val, _, _,model_state = trainAE(net_cdi, "test", embed_dim, data_loader, data_loader, 500, True)
-        #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
-        net_cdi.load_state_dict(model_state)
-
-
-        embeddings = None
-        net_cdi.eval()
-        for data in data_loader:
-            k1, k2, k3, k4, k5, k6, _ = data
-            k1, k2, k3, k4, k5, k6 = k1.to(device), k2.to(device), k3.to(device), k4.to(device), k5.to(device), k6.to(device)
-            _, _, _, _, _, _, _, _, _, _, _, _, output, _ = net_cdi.forward([k1, k2, k3, k4, k5, k6])
-            # print(output.shape)
-            
-            if embeddings is None:
-                embeddings = output.cpu().detach().numpy()
-            else:
-                embeddings = np.append(embeddings, output.cpu().detach().numpy(), axis = 0)
-
-        # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
-        #   if not os.path.exists(file_path):
-        #       os.makedirs(file_path) 
-        #   with open(file_path + file_name, mode='w', newline='') as file:
-        #       writer = csv.writer(file) 
-        #       for row in range(ids.shape[0]):
-        #           writer.writerow(np.concatenate(([ids[row]], embeddings[row])))
-        #print(ids.shape, embeddings.shape)
-        #writeEmbeddingsIntoFile('../embeddings/', f'{dataset_name}_embed_{embed_dim}.csv', ids, embeddings)
-        # model = torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt")
-        # encoder_1_weights = model['encoders.6.encoder.0.weight']
-        # row_means = torch.mean(encoder_1_weights, dim=0)
-        # Convert the tensor into a NumPy array
-        #row_means_np = row_means.cpu().numpy()
-        #print(ids.shape)
-        embeddings_df = pd.DataFrame(embeddings)
-        embeddings_df['id'] = ids
-        all_embeddings.append(embeddings_df)
-        #print('Done')
-    return all_embeddings, model_state
-
-
-def AutoencoderReconstructor_testing(X1, X2, X3 ,X4 ,X5 , X6, embedding_sizes, model_state):
-    
-    scaler =StandardScaler()
-    
-    ids = X1.index.to_numpy()
-
-    embd_sizes =[X1.shape[1],X2.shape[1],X3.shape[1],X4.shape[1],X5.shape[1],X6.shape[1]]
-
-    def sum_except_self(nums):
-        total_sum = sum(nums)
-        return [total_sum - num for num in nums]
-
-    embd_sizes_sum = sum_except_self(embd_sizes)
-
-    # print(embd_sizes_sum)
-    # print(embd_sizes)
-
-    # X1 = scaler.fit_transform(X1)
-    # X2 = scaler.fit_transform(X2)
-    # X3 = scaler.fit_transform(X3)
-    # X4 = scaler.fit_transform(X4)
-    # X5 = scaler.fit_transform(X5)
-    # X6 = scaler.fit_transform(X6)
-
-
-    X1 = X1.values
-    X2 = X2.values
-    X3 = X3.values
-    X4 = X4.values
-    X5 = X5.values
-    X6 = X6.values
-    
-    _, X1_dim = X1.shape
-    _, X2_dim = X2.shape
-    _, X3_dim = X3.shape
-    _, X4_dim = X4.shape
-    _, X5_dim = X5.shape
-    _, X6_dim = X6.shape
-
-    # print(X1.shape)
-    # print(X2.shape)
-    # print(X3.shape)
-    # print(X4.shape)
-    # print(X5.shape)
-    # print(X6.shape)
-
-    # print(X1.shape[0])
-
-
-    data = MyDataset(np.array(X1), np.array(X2), np.array(X3), np.array(X4), np.array(X5), np.array(X6), np.array([-1] * X1.shape[0]))
-    data_loader = DataLoader(data, batch_size = batch_size, shuffle=False, worker_init_fn=worker_init_fn) 
-
-    train_loss_values = []
-    val_loss_values = []
-    loss_lst = []
-    all_embeddings = []
-
-    if type(embedding_sizes) == list:
-        try_k_embeddings = embedding_sizes
-        for embed_dim in try_k_embeddings:
-            latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
-            #print('k=', embed_dim)
-            net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=8192, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
-            #net_cdi, loss_train, loss_val, _, _,model_state = trainAE(net_cdi, "test", embed_dim, data_loader, data_loader, 5, True)
-            #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
-
-            net_cdi.load_state_dict(model_state)
-            # finetune_cdi, loss_train, loss_val, _, _ = finetune_AE(finetune_cdi, dataset_name, user_embed_size, choice, data_loader, data_loader, 2, True)
-            finetune_cdi = FineTuneChemicalDiceIntegrator(net_cdi, user_embed_dim=embed_dim, default_embed_dim=8192).to(device)
-            finetune_cdi, loss_train, loss_val, _, _ = finetune_AE(finetune_cdi, user_embed_dim=embed_dim, choice=1, train_loader=data_loader, epochs=2, verbose=True)
-
-
-            embeddings = None
-            finetune_cdi.eval()
-            for data in data_loader:
-                k1, k2, k3, k4, k5, k6, _ = data
-                k1, k2, k3, k4, k5, k6 = k1.to(device), k2.to(device), k3.to(device), k4.to(device), k5.to(device), k6.to(device)
-                embed = finetune_cdi.getEmbed([k1, k2, k3, k4, k5, k6])
-                # print(output.shape)
-                
-                if embeddings is None:
-                    embeddings = embed.cpu().detach().numpy()
-                else:
-                    embeddings = np.append(embeddings, embed.cpu().detach().numpy(), axis = 0)
-
-                # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
-                #   if not os.path.exists(file_path):
-                #       os.makedirs(file_path) 
-                #   with open(file_path + file_name, mode='w', newline='') as file:
-                #       writer = csv.writer(file) 
-                #       for row in range(ids.shape[0]):
-                #           writer.writerow(np.concatenate(([ids[row]], embeddings[row])))
-                #print(ids.shape, embeddings.shape)
-                #writeEmbeddingsIntoFile('../embeddings/', f'{dataset_name}_embed_{embed_dim}.csv', ids, embeddings)
-                # model = torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt")
-                # encoder_1_weights = model['encoders.6.encoder.0.weight']
-                # row_means = torch.mean(encoder_1_weights, dim=0)
-                # Convert the tensor into a NumPy array
-                #row_means_np = row_means.cpu().numpy()
-                #print(ids.shape)
-            embeddings_df = pd.DataFrame(embeddings)
-            embeddings_df['id'] = ids
-            all_embeddings.append(embeddings_df)
-    else:
-        embed_dim = embedding_sizes
-
-        latent_space_dims = [X1_dim, X2_dim, X3_dim, X4_dim, X5_dim, X6_dim]
-        #print('k=', embed_dim)
-        net_cdi = ChemicalDiceIntegrator(latent_space_dims=latent_space_dims, embedding_dim=embed_dim, embd_sizes=embd_sizes, embd_sizes_sum=embd_sizes_sum).to(device)
-        #net_cdi, loss_train, loss_val, _, _,model_state = trainAE(net_cdi, "test", embed_dim, data_loader, data_loader, 5, True)
-        #net_cdi.load_state_dict(torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt"))
-
-        net_cdi.load_state_dict(model_state)
-
-
-        embeddings = None
-        net_cdi.eval()
-        for data in data_loader:
-            k1, k2, k3, k4, k5, k6, _ = data
-            k1, k2, k3, k4, k5, k6 = k1.to(device), k2.to(device), k3.to(device), k4.to(device), k5.to(device), k6.to(device)
-            _, _, _, _, _, _, _, _, _, _, _, _, output, _ = net_cdi.forward([k1, k2, k3, k4, k5, k6])
-            # print(output.shape)
-
-            if embeddings is None:
-                embeddings = output.cpu().detach().numpy()
-            else:
-                embeddings = np.append(embeddings, output.cpu().detach().numpy(), axis = 0)
-
-            # def writeEmbeddingsIntoFile(file_path, file_name, ids, embeddings):
-            #   if not os.path.exists(file_path):
-            #       os.makedirs(file_path) 
-            #   with open(file_path + file_name, mode='w', newline='') as file:
-            #       writer = csv.writer(file) 
-            #       for row in range(ids.shape[0]):
-            #           writer.writerow(np.concatenate(([ids[row]], embeddings[row])))
-            #print(ids.shape, embeddings.shape)
-            #writeEmbeddingsIntoFile('../embeddings/', f'{dataset_name}_embed_{embed_dim}.csv', ids, embeddings)
-            # model = torch.load(f"../weights/trainAE_{dataset_name}/{embed_dim}_cdi.pt")
-            # encoder_1_weights = model['encoders.6.encoder.0.weight']
-            # row_means = torch.mean(encoder_1_weights, dim=0)
-            # Convert the tensor into a NumPy array
-            #row_means_np = row_means.cpu().numpy()
-            #print(ids.shape)
-        embeddings_df = pd.DataFrame(embeddings)
-        embeddings_df['id'] = ids
-        all_embeddings.append(embeddings_df)
-    #print('Done')
-    return all_embeddings
 
 
 

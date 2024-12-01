@@ -1,0 +1,13 @@
+
+[docs]
+sphinx
+sphinx-gallery
+sphinx-rtd-theme
+seaborn
+matplotlib
+numpy
+pandas
+scikit-learn
+tensorly
+torch
+tqdm

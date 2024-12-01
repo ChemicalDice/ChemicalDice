@@ -1,3 +1,26 @@
+Metadata-Version: 2.1
+Name: ChemicalDice
+Version: 0.6.8
+Summary: ChemicalDice: Transforming cheminformatics and bioinformatics with advanced data fusion analysis.
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/x-rst
+License-File: LICENSE
+Provides-Extra: docs
+Requires-Dist: sphinx; extra == "docs"
+Requires-Dist: sphinx-gallery; extra == "docs"
+Requires-Dist: sphinx-rtd-theme; extra == "docs"
+Requires-Dist: seaborn; extra == "docs"
+Requires-Dist: matplotlib; extra == "docs"
+Requires-Dist: numpy; extra == "docs"
+Requires-Dist: pandas; extra == "docs"
+Requires-Dist: scikit-learn; extra == "docs"
+Requires-Dist: tensorly; extra == "docs"
+Requires-Dist: torch; extra == "docs"
+Requires-Dist: tqdm; extra == "docs"
+
 Chemical Dice
 =============
 
@@ -66,7 +89,7 @@ using the following commands:
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.9
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.8
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==1.2.0 tensorly==0.8.1 transformers==4.40.1
    pip install --upgrade tensorflow==2.15
@@ -115,7 +138,7 @@ Install packages
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.9
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.6.8
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==1.2.0 tensorly==0.8.1 transformers==4.40.1
    pip install --upgrade tensorflow==2.15
@@ -284,14 +307,10 @@ fuse the data and save it in a csv file. The fusion methods to use given
 by methods argument. Methods available for fusing data are ‘CDI’, ‘pca’,
 ‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’ and ‘tensordecompose’.
 The number of components to keep from different data in fusion can be
-provided by ``n_components`` aggumrent. Reduced dimensions to use for
+provided by ``n_components``\ aggumrent. Reduced dimensions to use for
 Chemical Dice Integrator can be provided by ``CDI_dim`` argument.
 Argument ``save_dir`` can be used to specify directory for saving the
-fused data. ``CDI_k `` a list representing the reduction in the number 
-of nodes from the first layer to the second and so on for six feature 
-vectors.  ``CDI_epochs `` The number of epochs for training the autoencoder 
-in the 'CDI' method.
-
+fused data.
 
 .. code:: python
 
@@ -299,8 +318,6 @@ in the 'CDI' method.
    fusiondata.fuseFeatures(n_components=10,
                      methods= ['pca','tensordecompose','plsda','CDI'],
                      CDI_dim= [4096,8192],
-                     CDI_k=[10, 7, 12, 5, 10, 6],
-                     CDI_epochs=500,
                      save_dir = "ChemicalDice_fusedData")
 
 **Evaluation of Fusion Methods**

@@ -246,20 +246,26 @@ or ‘max’
 Data fusion will take all the data that is normalized in previous step
 and make a single fused data. The ``fuseFeatures`` method can be used to
 fuse the data and save it in a csv file. The fusion methods to use given
-by methods argument. Methods available for fusing data are ‘AER’, ‘pca’,
+by methods argument. Methods available for fusing data are ‘CDI’, ‘pca’,
 ‘ica’, ‘ipca’, ‘cca’, ‘tsne’, ‘kpca’, ‘rks’, ‘SEM’ and ‘tensordecompose’.
 The number of components to keep from different data in fusion can be
-provided by ``n_components``\ aggumrent. Reduced dimensions to use for
-Autoencoder Reconstruction can be provided by ``AER_dim`` argument.
+provided by ``n_components`` aggumrent. Reduced dimensions to use for
+Chemical Dice Integrator can be provided by ``CDI_dim`` argument.
 Argument ``save_dir`` can be used to specify directory for saving the
-fused data.
+fused data. ``CDI_k `` a list representing the reduction in the number 
+of nodes from the first layer to the second and so on for six feature 
+vectors.  ``CDI_epochs `` The number of epochs for training the autoencoder 
+in the 'CDI' method.
+
 
 .. code:: python
 
    # fusing features in different data
    fusiondata.fuseFeatures(n_components=10,
-                     methods= ['pca','tensordecompose','plsda','AER'],
-                     AER_dim= [4096,8192],
+                     methods= ['pca','tensordecompose','plsda','CDI'],
+                     CDI_dim= [4096,8192],
+                     CDI_k=[10, 7, 12, 5, 10, 6],
+                     CDI_epochs=500,
                      save_dir = "ChemicalDice_fusedData")
 
 **Evaluation of Fusion Methods**

@@ -48,7 +48,7 @@ def smile_to_canonical(smiles_list):
             canonical_smiles = molecule.write("can").strip()
             canonical_smiles_list.append(canonical_smiles)
         except:
-            canonical_smiles_list.append(canonical_smiles)
+            canonical_smiles_list.append(smiles)
     return(canonical_smiles_list)
 
 

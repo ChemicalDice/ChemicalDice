@@ -325,6 +325,8 @@ def image_to_embeddings(input_file, output_file_name):
     df.index.name = 'id'
     # df.to_csv(output_file_name)
     df.to_csv(output_file_name, sep="\t",encoding="utf-8")
+    
+    df.to_pickle(output_file_name.replace(".csv",".pkl"))
 
 
 

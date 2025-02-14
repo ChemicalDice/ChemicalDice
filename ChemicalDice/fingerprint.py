@@ -14,7 +14,7 @@ from ChemicalDice.moldataset import MoleculeDataset
 from ChemicalDice.utils import get_data, create_logger, load_checkpoint
 
 
-def do_generate(model: nn.Module,
+def do_generate(model: nn.Module, 
                 data: MoleculeDataset,
                 args: Namespace,
                 ) -> List[List[float]]:
@@ -23,26 +23,53 @@ def do_generate(model: nn.Module,
 
     :param model: A model.
     :param data: A MoleculeDataset.
-    :param args: A StandardScaler object fit on the training targets.
+    :param args: A Namespace object with necessary arguments.
     :return: A list of fingerprints.
     """
+    # Set the model to evaluation mode
     model.eval()
     args.bond_drop_rate = 0
     preds = []
 
+    # Check dataset size
+    if len(data) == 0:
+        raise ValueError("The MoleculeDataset is empty. Please provide valid data.")
+    print(f"Dataset size: {len(data)}")
+
     mol_collator = MolCollator(args=args, shared_dict={})
 
+    # Diagnostic for dataset samples
+    print("Inspecting first few dataset items:")
+    for i in range(min(3, len(data))):  # Inspect up to 3 items
+        print(f"Item {i}: {data[i]}")
+
+    # DataLoader setup
     num_workers = 4
     mol_loader = DataLoader(data,
                             batch_size=32,
                             shuffle=False,
                             num_workers=num_workers,
                             collate_fn=mol_collator)
-    for item in mol_loader:
-        _, batch, features_batch, _, _ = item
-        with torch.no_grad():
-            batch_preds = model(batch, features_batch)
-            preds.extend(batch_preds.data.cpu().numpy())
+    
+    print("Checking DataLoader batches:")
+    try:
+        for batch_idx, item in enumerate(mol_loader):
+            print(f"Processing batch {batch_idx}")
+            if len(item) != 5:
+                raise ValueError(f"Unexpected batch structure: {item}")
+            
+            _, batch, features_batch, _, _ = item
+            print(f"Batch {batch_idx}: batch={batch}, features_batch={features_batch}")
+
+            # Perform prediction
+            with torch.no_grad():
+                batch_preds = model(batch, features_batch)
+                preds.extend(batch_preds.data.cpu().numpy())
+    except Exception as e:
+        print(f"Error encountered in DataLoader: {e}")
+        raise
+
+    print("Fingerprint generation completed successfully.")
     return preds
 
 import pandas as pd

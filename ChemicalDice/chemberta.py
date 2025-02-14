@@ -51,8 +51,9 @@ def smiles_to_embeddings(input_file, output_file):
   chem_id = smiles_df['id'].to_list()
   # get the ChemBERTa embeddings
   final_df = pd.DataFrame()
-
-  for smi in tqdm(smiles):
+  chem_id_final = []
+  smiles_final = []
+  for i, smi in enumerate(tqdm(smiles)):
     try:
       # print(smi)
       # Tokenize the smiles and obtain the tokens:
@@ -66,13 +67,15 @@ def smiles_to_embeddings(input_file, output_file):
       # convert the emeddings output to a dataframe
       df = pd.DataFrame(embeddings).astype("float")
       final_df = pd.concat([final_df, df])
+      chem_id_final.append(chem_id[i])
+      smiles_final.append(smi)
     except:
       print("Error for smiles ",smi)
 
   # add a prefix to all the column names
   final_df = final_df.add_prefix('ChB77MLM_')
   # print(final_df)
-  final_df.insert(loc=0, column='SMILES', value=smiles)
-  final_df.insert(loc=0, column='id', value=chem_id)
+  final_df.insert(loc=0, column='SMILES', value=smiles_final)
+  final_df.insert(loc=0, column='id', value=chem_id_final)
   final_df.to_csv(output_file,index=False)
 

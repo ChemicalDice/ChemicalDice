@@ -32,7 +32,7 @@ using the following commands:
 
 .. code:: bash
 
-   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.7.1
+   pip install -i https://test.pypi.org/simple/ ChemicalDice==0.7.2
    pip install multitasking==0.0.11 pandas==2.0.3 scikit-learn==1.2.2 seaborn==0.13.1 tqdm==4.66.4 xgboost==2.0.3 psutil==6.0.0
    pip install rdkit==2023.9.6 signaturizer==1.1.14 descriptastorus==2.6.1 mordred==1.2.0 tensorly==0.8.1 transformers==4.40.1
    pip install --upgrade tensorflow==2.15
